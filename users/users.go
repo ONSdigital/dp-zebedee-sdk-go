@@ -19,10 +19,9 @@ type Model struct {
 }
 
 //Create a new CMS user
-func Create(cli zhttp.Client, host string, s auth.Session, u Model) (Model, error) {
+func Create(cli zhttp.Client, s auth.Session, u Model) (Model, error) {
 	var user Model
-	url := fmt.Sprintf("%s/users", host)
-	req, err := zhttp.NewAuthenticatedRequest(url, s.ID, http.MethodPost, u)
+	req, err := cli.NewAuthenticatedRequest("/users", s.ID, http.MethodPost, u)
 	if err != nil {
 		return user, err
 	}
@@ -50,9 +49,8 @@ func Create(cli zhttp.Client, host string, s auth.Session, u Model) (Model, erro
 }
 
 //Get a list of the CMS users
-func Get(cli zhttp.Client, host string, s auth.Session) ([]Model, error) {
-	url := fmt.Sprintf("%s/users", host)
-	req, err := zhttp.NewAuthenticatedRequest(url, s.ID, http.MethodGet, nil)
+func Get(cli zhttp.Client, s auth.Session) ([]Model, error) {
+	req, err := cli.NewAuthenticatedRequest("/users", s.ID, http.MethodGet, nil)
 	if err != nil {
 		return nil, err
 	}

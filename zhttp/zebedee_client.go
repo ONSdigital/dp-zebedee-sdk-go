@@ -12,17 +12,18 @@ import (
 // Client defines a Zebedee HTTP client
 type Client interface {
 	Do(r *http.Request) (*http.Response, error)
+	GetHost() string
 	NewAuthenticatedRequest(uri, authToken, method string, entity interface{}) (*http.Request, error)
 }
 
 type zebedeeClient struct {
-	host    string
+	Host    string
 	httpCli *http.Client
 }
 
 func NewClient(host string) Client {
 	return &zebedeeClient{
-		host:    host,
+		Host:    host,
 		httpCli: &http.Client{Timeout: time.Second * 3},
 	}
 }
@@ -38,7 +39,7 @@ func (c *zebedeeClient) NewAuthenticatedRequest(uri, authToken, method string, e
 		body = bytes.NewReader(b)
 	}
 
-	url := fmt.Sprintf("%s%s", c.host, uri)
+	url := fmt.Sprintf("%s%s", c.Host, uri)
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return nil, err
@@ -51,4 +52,8 @@ func (c *zebedeeClient) NewAuthenticatedRequest(uri, authToken, method string, e
 
 func (c *zebedeeClient) Do(r *http.Request) (*http.Response, error) {
 	return c.Do(r)
+}
+
+func (c *zebedeeClient) GetHost() string {
+	return c.Host
 }
