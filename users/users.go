@@ -19,34 +19,34 @@ type Model struct {
 }
 
 //Create a new CMS user
-func Create(cli zhttp.Client, host string, s auth.Session, u Model) (*Model, error) {
+func Create(cli zhttp.Client, host string, s auth.Session, u Model) (Model, error) {
+	var user Model
 	url := fmt.Sprintf("%s/users", host)
 	req, err := zhttp.NewAuthenticatedRequest(url, s.ID, http.MethodPost, u)
 	if err != nil {
-		return nil, err
+		return user, err
 	}
 
 	resp, err := cli.Do(req)
 	if err != nil {
-		return nil, err
+		return user, err
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusCreated {
-		return nil, fmt.Errorf("error creating user expected status 201 but was %d", resp.StatusCode)
+	if resp.StatusCode != http.StatusOK {
+		return user, fmt.Errorf("error creating user expected status 200 but was %d", resp.StatusCode)
 	}
 
 	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return user, err
 	}
 
-	var newUser Model
-	if err := json.Unmarshal(b, &newUser); err != nil {
-		return nil, err
+	if err := json.Unmarshal(b, &user); err != nil {
+		return user, err
 	}
 
-	return &newUser, nil
+	return user, nil
 }
 
 //Get a list of the CMS users

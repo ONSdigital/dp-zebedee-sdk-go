@@ -36,39 +36,40 @@ type Permissions struct {
 }
 
 // OpenSession opens a new user session using the login credentials provided
-func OpenSession(cli zhttp.Client, host string, c Credentials) (*Session, error) {
+func OpenSession(cli zhttp.Client, host string, c Credentials) (Session, error) {
+	var s Session
 	body, err := json.Marshal(c)
 	if err != nil {
-		return nil, err
+		return s, err
 	}
 
 	url := fmt.Sprintf("%s/login", host)
 	r, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(body))
 	if err != nil {
-		return nil, err
+		return s, err
 	}
 
 	resp, err := cli.Do(r)
 	if err != nil {
-		return nil, err
+		return s, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf(loginStatusErr, resp.StatusCode)
+		return s, fmt.Errorf(loginStatusErr, resp.StatusCode)
 	}
 
 	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return s, err
 	}
 
-	sess := &Session{
+	s = Session{
 		Email: c.Email,
 		ID:    string(b),
 	}
 
-	return sess, nil
+	return s, nil
 }
 
 // SetPermissions  set the user's CMS permissions
@@ -94,34 +95,34 @@ func SetPermissions(cli zhttp.Client, host string, s Session, p Permissions) err
 }
 
 // GetPermissions  get the user's CMS permissions
-func GetPermissions(cli zhttp.Client, host string, s Session, email string) (*Permissions, error) {
+func GetPermissions(cli zhttp.Client, host string, s Session, email string) (Permissions, error) {
+	var p Permissions
 	url := fmt.Sprintf("%s/permisson?email=%s", host, email)
 	r, err := zhttp.NewAuthenticatedRequest(url, s.ID, http.MethodGet, nil)
 	if err != nil {
-		return nil, err
+		return p, err
 	}
 
 	resp, err := cli.Do(r)
 	if err != nil {
-		return nil, err
+		return p, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf(permissionStatusErr, resp.StatusCode)
+		return p, fmt.Errorf(permissionStatusErr, resp.StatusCode)
 	}
 
 	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return p, err
 	}
 
-	var p Permissions
 	if err := json.Unmarshal(b, &p); err != nil {
-		return nil, err
+		return p, err
 	}
 
-	return &p, nil
+	return p, nil
 }
 
 // {name: "", email: ""} users
