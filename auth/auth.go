@@ -94,7 +94,7 @@ func SetPermissions(cli zhttp.Client, s Session, p Permissions) error {
 }
 
 // GetPermissions  get the user's CMS permissions
-func GetPermissions(cli zhttp.Client, host string, s Session, email string) (Permissions, error) {
+func GetPermissions(cli zhttp.Client, s Session, email string) (Permissions, error) {
 	var p Permissions
 	uri := fmt.Sprintf("/permisson?email=%s", email)
 	r, err := cli.NewAuthenticatedRequest(uri, s.ID, http.MethodPost, nil)
