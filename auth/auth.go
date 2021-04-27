@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 
@@ -11,7 +12,8 @@ import (
 )
 
 const (
-	loginStatusErr = "login returned incorrect status code expected 200 but was %d"
+	loginStatusErr      = "login returned incorrect status code expected 200 but was %d"
+	permissionStatusErr = "permissions returned incorrect status code expected 200 but was %d"
 )
 
 // Credentials is the model representing the user login details
@@ -24,6 +26,13 @@ type Credentials struct {
 type Session struct {
 	Email string `json:"email"`
 	ID    string `json:"id"`
+}
+
+// Permissions is the model representing user's CMS permissions
+type Permissions struct {
+	Email  string `json:"email"`
+	Admin  bool   `json:"admin"`
+	Editor bool   `json:"editor"`
 }
 
 // OpenSession opens a new user session using the login credentials provided
@@ -60,6 +69,59 @@ func OpenSession(cli zhttp.Client, host string, c Credentials) (*Session, error)
 	}
 
 	return sess, nil
+}
+
+// SetPermissions  set the user's CMS permissions
+func SetPermissions(cli zhttp.Client, host string, s Session, p Permissions) error {
+	url := fmt.Sprintf("%s/permisson", host)
+	r, err := zhttp.NewAuthenticatedRequest(url, s.ID, http.MethodPost, p)
+	if err != nil {
+		return err
+	}
+
+	resp, err := cli.Do(r)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf(permissionStatusErr, resp.StatusCode)
+	}
+
+	io.Copy(ioutil.Discard, resp.Body)
+	return nil
+}
+
+// GetPermissions  get the user's CMS permissions
+func GetPermissions(cli zhttp.Client, host string, s Session, email string) (*Permissions, error) {
+	url := fmt.Sprintf("%s/permisson?email=%s", host, email)
+	r, err := zhttp.NewAuthenticatedRequest(url, s.ID, http.MethodGet, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := cli.Do(r)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf(permissionStatusErr, resp.StatusCode)
+	}
+
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var p Permissions
+	if err := json.Unmarshal(b, &p); err != nil {
+		return nil, err
+	}
+
+	return &p, nil
 }
 
 // {name: "", email: ""} users
