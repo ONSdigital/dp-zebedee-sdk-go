@@ -51,7 +51,7 @@ func (c *zebedeeClient) NewAuthenticatedRequest(uri, authToken, method string, e
 }
 
 func (c *zebedeeClient) Do(r *http.Request) (*http.Response, error) {
-	return c.Do(r)
+	return c.httpCli.Do(r)
 }
 
 func (c *zebedeeClient) GetHost() string {
