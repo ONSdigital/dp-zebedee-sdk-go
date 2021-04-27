@@ -6,30 +6,28 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"time"
+
+	"github.com/ONSdigital/dp-zebedee-sdk-go/zhttp"
 )
-
-type Credentials struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-type Session struct {
-	Email string
-	ID    string
-}
 
 const (
 	loginStatusErr = "login returned incorrect status code expected 200 but was %d"
 )
 
-var (
-	httpCli = http.Client{
-		Timeout: 5 * time.Second,
-	}
-)
+// Credentials is the model representing the user login details
+type Credentials struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
 
-func OpenSession(host string, c Credentials) (*Session, error) {
+// Session is the model of a CMS user session.
+type Session struct {
+	Email string `json:"email"`
+	ID    string `json:"id"`
+}
+
+// OpenSession opens a new user session using the login credentials provided
+func OpenSession(cli zhttp.Client, host string, c Credentials) (*Session, error) {
 	body, err := json.Marshal(c)
 	if err != nil {
 		return nil, err
@@ -41,7 +39,7 @@ func OpenSession(host string, c Credentials) (*Session, error) {
 		return nil, err
 	}
 
-	resp, err := httpCli.Do(r)
+	resp, err := cli.Do(r)
 	if err != nil {
 		return nil, err
 	}
@@ -63,3 +61,7 @@ func OpenSession(host string, c Credentials) (*Session, error) {
 
 	return sess, nil
 }
+
+// {name: "", email: ""} users
+// {email: "", password: ""}  password
+// {email: "", admin: false, editor: false} permission
