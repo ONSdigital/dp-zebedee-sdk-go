@@ -73,7 +73,7 @@ func Get(cli zhttp.Client, host string, s auth.Session) ([]Model, error) {
 	}
 
 	var users []Model
-	if err := json.Unmarshal(b, users); err != nil {
+	if err := json.Unmarshal(b, &users); err != nil {
 		return nil, err
 	}
 
