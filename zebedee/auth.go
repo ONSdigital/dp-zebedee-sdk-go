@@ -1,4 +1,4 @@
-package zauth
+package zebedee
 
 import (
 	"bytes"
@@ -7,13 +7,6 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
-
-	"github.com/ONSdigital/dp-zebedee-sdk-go/zhttp"
-)
-
-const (
-	loginStatusErr      = "login returned incorrect status code expected 200 but was %d"
-	permissionStatusErr = "permissions returned incorrect status code expected 200 but was %d"
 )
 
 // Credentials is the model representing the user login details
@@ -36,7 +29,7 @@ type Permissions struct {
 }
 
 // OpenSession opens a new user session using the login credentials provided
-func OpenSession(cli zhttp.Client, c Credentials) (Session, error) {
+func OpenSession(cli Client, c Credentials) (Session, error) {
 	var s Session
 	body, err := json.Marshal(c)
 	if err != nil {
@@ -56,7 +49,7 @@ func OpenSession(cli zhttp.Client, c Credentials) (Session, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return s, zhttp.IncorrectStatusErr("/login", http.MethodPost, http.StatusOK, resp.StatusCode)
+		return s, IncorrectStatusErr("/login", http.MethodPost, http.StatusOK, resp.StatusCode)
 	}
 
 	b, err := ioutil.ReadAll(resp.Body)
@@ -73,7 +66,7 @@ func OpenSession(cli zhttp.Client, c Credentials) (Session, error) {
 }
 
 // SetPermissions  set the user's CMS permissions
-func SetPermissions(cli zhttp.Client, s Session, p Permissions) error {
+func SetPermissions(cli Client, s Session, p Permissions) error {
 	r, err := cli.NewAuthenticatedRequest("/permission", s.ID, http.MethodPost, p)
 	if err != nil {
 		return err
@@ -86,7 +79,7 @@ func SetPermissions(cli zhttp.Client, s Session, p Permissions) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return zhttp.IncorrectStatusErr("/permission", http.MethodPost, http.StatusOK, resp.StatusCode)
+		return IncorrectStatusErr("/permission", http.MethodPost, http.StatusOK, resp.StatusCode)
 	}
 
 	io.Copy(ioutil.Discard, resp.Body)
@@ -94,7 +87,7 @@ func SetPermissions(cli zhttp.Client, s Session, p Permissions) error {
 }
 
 // GetPermissions  get the user's CMS permissions
-func GetPermissions(cli zhttp.Client, s Session, email string) (Permissions, error) {
+func GetPermissions(cli Client, s Session, email string) (Permissions, error) {
 	var p Permissions
 	uri := fmt.Sprintf("/permisson?email=%s", email)
 	r, err := cli.NewAuthenticatedRequest(uri, s.ID, http.MethodGet, nil)
@@ -109,7 +102,7 @@ func GetPermissions(cli zhttp.Client, s Session, email string) (Permissions, err
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return p, zhttp.IncorrectStatusErr("/permission", http.MethodGet, http.StatusOK, resp.StatusCode)
+		return p, IncorrectStatusErr("/permission", http.MethodGet, http.StatusOK, resp.StatusCode)
 	}
 
 	b, err := ioutil.ReadAll(resp.Body)

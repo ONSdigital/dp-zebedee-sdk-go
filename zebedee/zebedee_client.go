@@ -1,4 +1,4 @@
-package zhttp
+package zebedee
 
 import (
 	"bytes"
@@ -84,5 +84,5 @@ func (c *zebedeeClient) GetHost() string {
 }
 
 func IncorrectStatusErr(endpoint, method string, expected, actual int) error {
-	return fmt.Errorf("%s %s returned status %d but expected %d", expected, method, expected, actual)
+	return fmt.Errorf("%s %s returned status %d but expected %d", endpoint, method, expected, actual)
 }
