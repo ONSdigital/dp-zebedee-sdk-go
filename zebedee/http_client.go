@@ -15,10 +15,10 @@ type HttpClient interface {
 }
 
 type httpClient struct {
-	//Host    string
 	httpCli *http.Client
 }
 
+//NewHttpClient Construct a new HttpClient
 func NewHttpClient() HttpClient {
 	return &httpClient{
 		httpCli: &http.Client{Timeout: time.Second * 3},
@@ -33,7 +33,7 @@ func (c *httpClient) RequestObject(r *http.Request, expectedStatus int, entity i
 	defer resp.Body.Close()
 
 	if resp.StatusCode != expectedStatus {
-		return IncorrectStatusErr(r.RequestURI, r.Method, expectedStatus, resp.StatusCode)
+		return IncorrectStatusErr(r, expectedStatus, resp.StatusCode)
 	}
 
 	b, err := ioutil.ReadAll(resp.Body)
@@ -48,10 +48,11 @@ func (c *httpClient) RequestObject(r *http.Request, expectedStatus int, entity i
 	return nil
 }
 
+//Do execute the http request
 func (c *httpClient) Do(r *http.Request) (*http.Response, error) {
 	return c.httpCli.Do(r)
 }
 
-func IncorrectStatusErr(endpoint, method string, expected, actual int) error {
-	return fmt.Errorf("%s %s expected status %d but received %d", endpoint, method, expected, actual)
+func IncorrectStatusErr(req *http.Request, expected, actual int) error {
+	return fmt.Errorf("%s %s expected status %d but received %d", req.RequestURI, req.Method, expected, actual)
 }

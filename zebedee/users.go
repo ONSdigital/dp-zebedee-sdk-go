@@ -1,6 +1,8 @@
 package zebedee
 
 import (
+	"io"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -33,4 +35,30 @@ func (z *zebedeeClient) GetUsers(s Session) ([]User, error) {
 	}
 
 	return users, nil
+}
+
+//DeleteUser delete a CMS user.
+func (z *zebedeeClient) DeleteUser(s Session, email string) error {
+	req, err := z.newAuthenticatedRequest("/users?email="+email, s.ID, http.MethodDelete, nil)
+	if err != nil {
+		return err
+	}
+
+	resp, err := z.HttpClient.Do(req)
+	if err != nil {
+		return err
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return IncorrectStatusErr(req, http.StatusOK, resp.StatusCode)
+	}
+
+	_, err = io.Copy(ioutil.Discard, resp.Body)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

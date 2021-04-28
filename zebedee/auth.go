@@ -30,7 +30,7 @@ func (z *zebedeeClient) OpenSession(c Credentials) (Session, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return s, IncorrectStatusErr("/login", http.MethodPost, http.StatusOK, resp.StatusCode)
+		return s, IncorrectStatusErr(r, http.StatusOK, resp.StatusCode)
 	}
 
 	b, err := ioutil.ReadAll(resp.Body)
@@ -60,7 +60,7 @@ func (z *zebedeeClient) SetPermissions(s Session, p Permissions) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return IncorrectStatusErr("/permission", http.MethodPost, http.StatusOK, resp.StatusCode)
+		return IncorrectStatusErr(r, http.StatusOK, resp.StatusCode)
 	}
 
 	io.Copy(ioutil.Discard, resp.Body)

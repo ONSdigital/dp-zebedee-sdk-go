@@ -15,6 +15,7 @@ type Client interface {
 	GetPermissions(s Session, email string) (Permissions, error)
 	CreateUser(s Session, u User) (User, error)
 	GetUsers(s Session) ([]User, error)
+	DeleteUser(s Session, email string) error
 }
 
 type zebedeeClient struct {
