@@ -1,4 +1,4 @@
-package auth
+package zauth
 
 import (
 	"bytes"
@@ -56,7 +56,7 @@ func OpenSession(cli zhttp.Client, c Credentials) (Session, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return s, fmt.Errorf(loginStatusErr, resp.StatusCode)
+		return s, zhttp.IncorrectStatusErr("/login", http.MethodPost, http.StatusOK, resp.StatusCode)
 	}
 
 	b, err := ioutil.ReadAll(resp.Body)
@@ -86,7 +86,7 @@ func SetPermissions(cli zhttp.Client, s Session, p Permissions) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf(permissionStatusErr, resp.StatusCode)
+		return zhttp.IncorrectStatusErr("/permission", http.MethodPost, http.StatusOK, resp.StatusCode)
 	}
 
 	io.Copy(ioutil.Discard, resp.Body)
@@ -97,7 +97,7 @@ func SetPermissions(cli zhttp.Client, s Session, p Permissions) error {
 func GetPermissions(cli zhttp.Client, s Session, email string) (Permissions, error) {
 	var p Permissions
 	uri := fmt.Sprintf("/permisson?email=%s", email)
-	r, err := cli.NewAuthenticatedRequest(uri, s.ID, http.MethodPost, nil)
+	r, err := cli.NewAuthenticatedRequest(uri, s.ID, http.MethodGet, nil)
 	if err != nil {
 		return p, err
 	}
@@ -109,7 +109,7 @@ func GetPermissions(cli zhttp.Client, s Session, email string) (Permissions, err
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return p, fmt.Errorf(permissionStatusErr, resp.StatusCode)
+		return p, zhttp.IncorrectStatusErr("/permission", http.MethodGet, http.StatusOK, resp.StatusCode)
 	}
 
 	b, err := ioutil.ReadAll(resp.Body)
@@ -123,7 +123,3 @@ func GetPermissions(cli zhttp.Client, s Session, email string) (Permissions, err
 
 	return p, nil
 }
-
-// {name: "", email: ""} users
-// {email: "", password: ""}  password
-// {email: "", admin: false, editor: false} permission

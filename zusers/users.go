@@ -1,4 +1,4 @@
-package users
+package zusers
 
 import (
 	"encoding/json"
@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/ONSdigital/dp-zebedee-sdk-go/auth"
+	"github.com/ONSdigital/dp-zebedee-sdk-go/zauth"
 	"github.com/ONSdigital/dp-zebedee-sdk-go/zhttp"
 )
 
@@ -19,7 +19,7 @@ type Model struct {
 }
 
 //Create a new CMS user
-func Create(cli zhttp.Client, s auth.Session, u Model) (Model, error) {
+func Create(cli zhttp.Client, s zauth.Session, u Model) (Model, error) {
 	var user Model
 	req, err := cli.NewAuthenticatedRequest("/users", s.ID, http.MethodPost, u)
 	if err != nil {
@@ -49,7 +49,7 @@ func Create(cli zhttp.Client, s auth.Session, u Model) (Model, error) {
 }
 
 //Get a list of the CMS users
-func Get(cli zhttp.Client, s auth.Session) ([]Model, error) {
+func Get(cli zhttp.Client, s zauth.Session) ([]Model, error) {
 	req, err := cli.NewAuthenticatedRequest("/users", s.ID, http.MethodGet, nil)
 	if err != nil {
 		return nil, err
@@ -72,6 +72,21 @@ func Get(cli zhttp.Client, s auth.Session) ([]Model, error) {
 
 	var users []Model
 	if err := json.Unmarshal(b, &users); err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
+func Get2(cli zhttp.Client, s zauth.Session) ([]Model, error) {
+	req, err := cli.NewAuthenticatedRequest("/users", s.ID, http.MethodGet, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var users []Model
+	err = cli.RequestObject(req, http.StatusOK, &users)
+	if err != nil {
 		return nil, err
 	}
 
