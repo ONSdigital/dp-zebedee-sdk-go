@@ -70,7 +70,7 @@ func (z *zebedeeClient) SetPermissions(s Session, p Permissions) error {
 // GetPermissions  get the user's CMS permissions
 func (z *zebedeeClient) GetPermissions(s Session, email string) (Permissions, error) {
 	var p Permissions
-	uri := fmt.Sprintf("/permisson?email=%s", email)
+	uri := fmt.Sprintf("/permission?email=%s", email)
 
 	r, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodGet, nil)
 	if err != nil {
