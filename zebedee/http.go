@@ -24,9 +24,9 @@ type httpClient struct {
 }
 
 //NewHttpClient Construct a new HttpClient
-func NewHttpClient() HttpClient {
+func NewHttpClient(timeout time.Duration) HttpClient {
 	return &httpClient{
-		httpCli: &http.Client{Timeout: time.Second * 3},
+		httpCli: &http.Client{Timeout: timeout},
 	}
 }
 
