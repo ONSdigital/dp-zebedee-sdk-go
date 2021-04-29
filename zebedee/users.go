@@ -1,8 +1,7 @@
 package zebedee
 
 import (
-	"io"
-	"io/ioutil"
+	"fmt"
 	"net/http"
 )
 
@@ -18,6 +17,24 @@ func (z *zebedeeClient) CreateUser(s Session, u User) (User, error) {
 	if err != nil {
 		return user, err
 	}
+	return user, nil
+}
+
+//GetUser a CMS user by email
+func (z *zebedeeClient) GetUser(s Session, email string) (User, error) {
+	var user User
+
+	uri := fmt.Sprintf("/users?email=%s", email)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodGet, nil)
+	if err != nil {
+		return user, err
+	}
+
+	err = z.HttpClient.RequestObject(req, http.StatusOK, &user)
+	if err != nil {
+		return user, err
+	}
+
 	return user, nil
 }
 
@@ -51,12 +68,11 @@ func (z *zebedeeClient) DeleteUser(s Session, email string) error {
 
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return IncorrectStatusErr(req, http.StatusOK, resp.StatusCode)
+	if err = checkResponseStatus(resp, http.StatusOK); err != nil {
+		return err
 	}
 
-	_, err = io.Copy(ioutil.Discard, resp.Body)
-	if err != nil {
+	if err = discardResponse(resp); err != nil {
 		return err
 	}
 

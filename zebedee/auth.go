@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
 )
@@ -29,8 +28,8 @@ func (z *zebedeeClient) OpenSession(c Credentials) (Session, error) {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return s, IncorrectStatusErr(r, http.StatusOK, resp.StatusCode)
+	if err = checkResponseStatus(resp, http.StatusOK); err != nil {
+		return s, err
 	}
 
 	b, err := ioutil.ReadAll(resp.Body)
@@ -59,11 +58,13 @@ func (z *zebedeeClient) SetPermissions(s Session, p Permissions) error {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return IncorrectStatusErr(r, http.StatusOK, resp.StatusCode)
+	if err = checkResponseStatus(resp, http.StatusOK); err != nil {
+		return err
 	}
 
-	io.Copy(ioutil.Discard, resp.Body)
+	if err = discardResponse(resp); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -83,4 +84,33 @@ func (z *zebedeeClient) GetPermissions(s Session, email string) (Permissions, er
 	}
 
 	return p, nil
+}
+
+//SetPassword set the user password
+func (z *zebedeeClient) SetPassword(s Session, email, password string) error {
+	c := Credentials{
+		Email:    email,
+		Password: password,
+	}
+
+	r, err := z.newAuthenticatedRequest("/password", s.ID, http.MethodPost, c)
+	if err != nil {
+		return err
+	}
+
+	resp, err := z.HttpClient.Do(r)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if err = checkResponseStatus(resp, http.StatusOK); err != nil {
+		return err
+	}
+
+	if err = discardResponse(resp); err != nil {
+		return err
+	}
+
+	return nil
 }

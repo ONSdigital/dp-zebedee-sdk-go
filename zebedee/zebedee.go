@@ -8,14 +8,16 @@ import (
 	"net/http"
 )
 
-//Client defines a client for Zebedee CMS API
+//Client defines a client for the Zebedee CMS API
 type Client interface {
 	OpenSession(c Credentials) (Session, error)
 	SetPermissions(s Session, p Permissions) error
 	GetPermissions(s Session, email string) (Permissions, error)
 	CreateUser(s Session, u User) (User, error)
+	GetUser(s Session, email string) (User, error)
 	GetUsers(s Session) ([]User, error)
 	DeleteUser(s Session, email string) error
+	SetPassword(s Session, email, password string) error
 }
 
 type zebedeeClient struct {
