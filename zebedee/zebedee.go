@@ -18,6 +18,7 @@ type Client interface {
 	GetUsers(s Session) ([]User, error)
 	DeleteUser(s Session, email string) error
 	SetPassword(s Session, email, password string) error
+	AddTeamMember(s Session, teamName, email string) error
 }
 
 type zebedeeClient struct {

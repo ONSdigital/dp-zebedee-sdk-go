@@ -26,7 +26,8 @@ var host = "http://localhost:8082"
 
 ...
 
-zebCli := zebedee.NewClient(host, zebedee.NewHttpClient())
+httpCli := zebedee.NewHttpClient(time.Second * 5)
+zebCli := zebedee.NewClient(host, httpCli)
 
 c := zebedee.Credentials{
     Email:    "test.email@ons.gov.uk",
