@@ -1,23 +1,29 @@
 # dp-zebedee-sdk-go
+
 Golang SDK for Zebedee CMS.
 
 ### Current functionality
+
 - Open session / login
 - Create user, Delete user, Get user(s)
 - Set user password
 - Set/Get user permissions
-
-
+- Create/Get/Delete collections.
+- Add a Team member
 
 ### Getting started
+
 Get the library:
+
 ```
 go get github.com/ONSdigital/dp-zebedee-sdk-go/zebedee@latest
 ```
+
 Opening a session:
+
 ```go
 import (
-    "github.com/ONSdigital/dp-zebedee-sdk-go/zebedee"
+"github.com/ONSdigital/dp-zebedee-sdk-go/zebedee"
 )
 
 ...
