@@ -4,24 +4,24 @@ Golang SDK for Zebedee CMS.
 
 ### Current functionality
 
-####Auth:
+#### Auth:
 - Open session (sign in)
 - Set Password
 - Get user permissions
 - Set user permissions
 
-####Users:
+#### Users:
 - Create
 - Delete
 - Get user(s)
 
-####Collections:
+#### Collections:
 - Create collection
 - Get collection (by ID)
 - Delete collection
 - List collections
 
-####Teams
+#### Teams
 - Add team member
 - Remove team member
 - Create new team
