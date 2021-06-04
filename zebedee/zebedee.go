@@ -14,6 +14,7 @@ type CollectionsAPI interface {
 	CreateCollection(s Session, desc CollectionDescription) (CollectionDescription, error)
 	DeleteCollection(s Session, id string) error
 	GetCollections(s Session) ([]CollectionDescription, error)
+	UpdateCollection(s Session, desc CollectionDescription) error
 }
 
 //PermissionsAPI defines the user permissions endpoints in Zebedee CMS

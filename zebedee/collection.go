@@ -102,3 +102,14 @@ func (z *zebedeeClient) GetCollections(s Session) ([]CollectionDescription, erro
 
 	return collectionList, nil
 }
+
+//UpdateCollection updates the collection description
+func (z *zebedeeClient) UpdateCollection(s Session, desc CollectionDescription) error {
+	uri := fmt.Sprintf("/collection/%s", desc.ID)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPut, desc)
+	if err != nil {
+		return err
+	}
+
+	return z.executeRequestNoResponse(req, http.StatusOK)
+}
