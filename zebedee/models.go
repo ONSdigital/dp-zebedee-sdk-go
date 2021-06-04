@@ -102,6 +102,16 @@ type URIInfo struct {
 	Error                  string `json:"error"`
 }
 
+type Team struct {
+	ID      int      `json:"id"`
+	Name    string   `json:"name"`
+	Members []string `json:"members"`
+}
+
+type TeamsList struct {
+	Teams []Team `json:"teams"`
+}
+
 func (pt PublishType) Name() string {
 	switch pt {
 	case 0:

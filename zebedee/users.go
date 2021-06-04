@@ -61,20 +61,5 @@ func (z *zebedeeClient) DeleteUser(s Session, email string) error {
 		return err
 	}
 
-	resp, err := z.HttpClient.Do(req)
-	if err != nil {
-		return err
-	}
-
-	defer resp.Body.Close()
-
-	if err = checkResponseStatus(resp, http.StatusOK); err != nil {
-		return err
-	}
-
-	if err = discardResponse(resp); err != nil {
-		return err
-	}
-
-	return nil
+	return z.executeRequestNoResponse(req, http.StatusOK)
 }

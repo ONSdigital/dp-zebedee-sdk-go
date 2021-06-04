@@ -52,20 +52,7 @@ func (z *zebedeeClient) SetPermissions(s Session, p Permissions) error {
 		return err
 	}
 
-	resp, err := z.HttpClient.Do(r)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	if err = checkResponseStatus(resp, http.StatusOK); err != nil {
-		return err
-	}
-
-	if err = discardResponse(resp); err != nil {
-		return err
-	}
-	return nil
+	return z.executeRequestNoResponse(r, http.StatusOK)
 }
 
 // GetPermissions  get the user's CMS permissions
@@ -98,19 +85,7 @@ func (z *zebedeeClient) SetPassword(s Session, email, password string) error {
 		return err
 	}
 
-	resp, err := z.HttpClient.Do(r)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	if err = checkResponseStatus(resp, http.StatusOK); err != nil {
-		return err
-	}
-
-	if err = discardResponse(resp); err != nil {
-		return err
-	}
+	return z.executeRequestNoResponse(r, http.StatusOK)
 
 	return nil
 }

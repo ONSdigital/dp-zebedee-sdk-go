@@ -86,3 +86,19 @@ func (z *zebedeeClient) DeleteCollection(s Session, id string) error {
 
 	return nil
 }
+
+//GetCollections returns a list of collection descriptions for each current collection
+func (z *zebedeeClient) GetCollections(s Session) ([]CollectionDescription, error) {
+	req, err := z.newAuthenticatedRequest("/collections", s.ID, http.MethodGet, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var collectionList []CollectionDescription
+	err = z.HttpClient.RequestObject(req, 200, &collectionList)
+	if err != nil {
+		return nil, err
+	}
+
+	return collectionList, nil
+}

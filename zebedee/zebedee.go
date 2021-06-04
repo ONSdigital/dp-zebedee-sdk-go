@@ -13,6 +13,7 @@ type CollectionsAPI interface {
 	GetCollectionByID(s Session, id string) (CollectionDescription, error)
 	CreateCollection(s Session, desc CollectionDescription) (CollectionDescription, error)
 	DeleteCollection(s Session, id string) error
+	GetCollections(s Session) ([]CollectionDescription, error)
 }
 
 //PermissionsAPI defines the user permissions endpoints in Zebedee CMS
@@ -38,6 +39,15 @@ type AuthAPI interface {
 //TeamsAPI defines the teams endpoints in Zebedee CMS
 type TeamsAPI interface {
 	AddTeamMember(s Session, teamName, email string) error
+	RemoveTeamMember(s Session, teamName, email string) error
+	CreateTeam(s Session, teamName string) (bool, error)
+	DeleteTeam(s Session, teamName string) error
+	ListTeams(s Session) (TeamsList, error)
+}
+
+//KeyringAPI defines the Keyring endpoints in Zebedee CMS
+type KeyringAPI interface {
+	ListUserKeyring(s Session, email string) ([]string, error)
 }
 
 //Client defines a client for the Zebedee CMS API
@@ -47,6 +57,7 @@ type Client interface {
 	PermissionsAPI
 	CollectionsAPI
 	TeamsAPI
+	KeyringAPI
 }
 
 type zebedeeClient struct {
@@ -82,4 +93,23 @@ func (z *zebedeeClient) newAuthenticatedRequest(uri, authToken, method string, e
 	req.Header.Set("content-type", "application/json")
 	req.Header.Set("X-Florence-Token", authToken)
 	return req, nil
+}
+
+//executeRequestNoResponse execute the HTTP request, check for the expected status but discard the response body
+func (z *zebedeeClient) executeRequestNoResponse(r *http.Request, expectedStatus int) error {
+	resp, err := z.HttpClient.Do(r)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if err = checkResponseStatus(resp, expectedStatus); err != nil {
+		return err
+	}
+
+	if err = discardResponse(resp); err != nil {
+		return err
+	}
+
+	return nil
 }
