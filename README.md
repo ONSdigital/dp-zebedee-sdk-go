@@ -28,6 +28,7 @@ Golang SDK for Zebedee CMS.
 - Create new team
 - Delete a team
 - List teams
+- Get team (by name)
 
 ### Getting started
 

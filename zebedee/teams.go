@@ -36,7 +36,7 @@ func (z *zebedeeClient) CreateTeam(s Session, teamName string) (bool, error) {
 	}
 
 	var result bool
-	if err := z.HttpClient.RequestObject(req,  http.StatusOK, &result); err != nil {
+	if err := z.HttpClient.RequestObject(req, http.StatusOK, &result); err != nil {
 		return false, err
 	}
 
@@ -67,4 +67,20 @@ func (z *zebedeeClient) ListTeams(s Session) (TeamsList, error) {
 	}
 
 	return teams, nil
+}
+
+//GetTeam return the team with the specified name.
+func (z *zebedeeClient) GetTeam(s Session, teamName string) (Team, error) {
+	var team Team
+	uri := fmt.Sprintf("/teams/%s", teamName)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodGet, nil)
+	if err != nil {
+		return team, err
+	}
+
+	if err := z.HttpClient.RequestObject(req, http.StatusOK, &team); err != nil {
+		return team, err
+	}
+
+	return team, nil
 }

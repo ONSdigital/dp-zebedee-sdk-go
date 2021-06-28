@@ -44,6 +44,7 @@ type TeamsAPI interface {
 	CreateTeam(s Session, teamName string) (bool, error)
 	DeleteTeam(s Session, teamName string) error
 	ListTeams(s Session) (TeamsList, error)
+	GetTeam(s Session, teamName string) (Team, error)
 }
 
 //KeyringAPI defines the Keyring endpoints in Zebedee CMS
