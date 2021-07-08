@@ -74,12 +74,7 @@ func (z *zebedeeClient) GetPermissions(s Session, email string) (Permissions, er
 }
 
 //SetPassword set the user password
-func (z *zebedeeClient) SetPassword(s Session, email, password string) error {
-	c := Credentials{
-		Email:    email,
-		Password: password,
-	}
-
+func (z *zebedeeClient) SetPassword(s Session, c Credentials) error {
 	r, err := z.newAuthenticatedRequest("/password", s.ID, http.MethodPost, c)
 	if err != nil {
 		return err

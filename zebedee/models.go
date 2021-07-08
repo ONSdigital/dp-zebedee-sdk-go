@@ -31,6 +31,7 @@ type User struct {
 type Credentials struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
+	OldPassword string `json:"oldPassword"`
 }
 
 // Session is the model of a CMS user session.

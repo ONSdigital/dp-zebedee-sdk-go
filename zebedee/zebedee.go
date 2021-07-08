@@ -29,7 +29,7 @@ type UsersAPI interface {
 	GetUser(s Session, email string) (User, error)
 	GetUsers(s Session) ([]User, error)
 	DeleteUser(s Session, email string) error
-	SetPassword(s Session, email, password string) error
+	SetPassword(s Session, c Credentials) error
 }
 
 //AuthAPI defines the authentication endpoints in Zebedee CMS
