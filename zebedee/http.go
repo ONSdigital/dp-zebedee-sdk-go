@@ -10,7 +10,8 @@ import (
 )
 
 const (
-	incorrectStatusErrFmt = "%s %s expected status %d but received %d"
+	incorrectStatusErrFmt = "request %s %s expected status %d but received %d"
+	incorrectStatusWithBodyErrFmt = "request %s %s expected status %d but received %d response body: %s"
 )
 
 // HttpClient defines a Zebedee HTTP client
@@ -63,7 +64,16 @@ func (c *httpClient) Do(r *http.Request) (*http.Response, error) {
 func checkResponseStatus(resp *http.Response, expected int) error {
 	req := resp.Request
 	if resp.StatusCode != expected {
-		return fmt.Errorf(incorrectStatusErrFmt, req.RequestURI, req.Method, expected, resp.StatusCode)
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return fmt.Errorf("unexpected erro attempting to read error response body: %s", err.Error())
+		}
+
+		if len(body) > 0 {
+			return fmt.Errorf(incorrectStatusWithBodyErrFmt, req.Method, req.URL.RequestURI(), expected, resp.StatusCode, string(body))
+		}
+
+		return fmt.Errorf(incorrectStatusErrFmt, req.Method, req.URL.RequestURI(), expected, resp.StatusCode)
 	}
 	return nil
 }
