@@ -41,7 +41,7 @@ func (z *zebedeeClient) CreateCollection(s Session, desc CollectionDescription) 
 		return updated, err
 	}
 
-	err = z.HttpClient.RequestObject(req, http.StatusOK, &updated)
+	err = z.requestObject(req, http.StatusOK, &updated)
 	if err != nil {
 		return updated, err
 	}
@@ -59,7 +59,7 @@ func (z *zebedeeClient) GetCollectionByID(s Session, id string) (CollectionDescr
 		return desc, err
 	}
 
-	err = z.HttpClient.RequestObject(req, 200, &desc)
+	err = z.requestObject(req, 200, &desc)
 	if err != nil {
 		return desc, err
 	}
@@ -76,7 +76,7 @@ func (z *zebedeeClient) DeleteCollection(s Session, id string) error {
 	}
 
 	var success bool
-	err = z.HttpClient.RequestObject(req, 200, &success)
+	err = z.requestObject(req, 200, &success)
 	if err != nil {
 		return err
 	}
@@ -99,7 +99,7 @@ func (z *zebedeeClient) ApproveCollection(s Session, id string) error {
 	}
 
 	var success bool
-	err = z.HttpClient.RequestObject(req, 200, &success)
+	err = z.requestObject(req, 200, &success)
 	if err != nil {
 		return err
 	}
@@ -120,7 +120,7 @@ func (z *zebedeeClient) UnlockCollection(s Session, id string) error {
 	}
 
 	var success bool
-	err = z.HttpClient.RequestObject(req, 200, &success)
+	err = z.requestObject(req, 200, &success)
 	if err != nil {
 		return err
 	}
@@ -140,7 +140,7 @@ func (z *zebedeeClient) GetCollections(s Session) ([]CollectionDescription, erro
 	}
 
 	var collectionList []CollectionDescription
-	err = z.HttpClient.RequestObject(req, 200, &collectionList)
+	err = z.requestObject(req, 200, &collectionList)
 	if err != nil {
 		return nil, err
 	}

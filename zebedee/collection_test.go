@@ -1,6 +1,8 @@
 package zebedee
 
 import (
+	"bytes"
+	"context"
 	"errors"
 	"github.com/ONSdigital/dp-net/request"
 	"github.com/ONSdigital/dp-zebedee-sdk-go/zebedee/mock"
@@ -16,7 +18,19 @@ const (
 )
 
 func Test_CreateCollection(t *testing.T) {
-	httpClient := newHttpClientMock()
+
+	collectionJson := `{
+		"name": "Coronavirus key indicators"
+	}`
+
+	httpClient := &mock.HttpClientMock{
+		DoFunc: func(ctx context.Context, req *http.Request) (*http.Response, error) {
+			recorder := httptest.NewRecorder()
+			recorder.Code = http.StatusOK
+			recorder.Body = bytes.NewBufferString(collectionJson)
+			return recorder.Result(), nil
+		},
+	}
 	zebedeeClient := NewClient(host, httpClient)
 	session := newSession()
 
@@ -24,22 +38,25 @@ func Test_CreateCollection(t *testing.T) {
 		collectionDescription := NewCollection("Collection Name")
 
 		Convey("When CreateCollection is called", func() {
-			_, err := zebedeeClient.CreateCollection(session, collectionDescription)
+			createdCollection, err := zebedeeClient.CreateCollection(session, collectionDescription)
 
 			Convey("Then the expected request is sent to the HTTP client", func() {
-				So(httpClient.RequestObjectCalls(), ShouldHaveLength, 1)
+				So(httpClient.DoCalls(), ShouldHaveLength, 1)
 
-				req := httpClient.RequestObjectCalls()[0].R
+				req := httpClient.DoCalls()[0].Req
 				So(req.Method, ShouldEqual, http.MethodPost)
 				So(req.URL.String(), ShouldEqual, host+"/collection")
 				So(req.Header.Get(request.FlorenceHeaderKey), ShouldEqual, session.ID)
 				So(req.Header.Get("content-type"), ShouldEqual, "application/json")
-
-				So(httpClient.RequestObjectCalls()[0].ExpectedStatus, ShouldEqual, http.StatusOK)
 			})
 
 			Convey("Then no error is returned", func() {
 				So(err, ShouldBeNil)
+			})
+
+			Convey("Then the returned collection is as returned from Zebedee", func() {
+				So(createdCollection, ShouldNotBeNil)
+				So(createdCollection.Name, ShouldEqual, "Coronavirus key indicators")
 			})
 		})
 	})
@@ -48,8 +65,8 @@ func Test_CreateCollection(t *testing.T) {
 func Test_CreateCollection_RequestError(t *testing.T) {
 	expectedError := errors.New("something broke")
 	httpClient := newHttpClientMock()
-	httpClient.RequestObjectFunc = func(r *http.Request, expectedStatus int, entity interface{}) error {
-		return expectedError
+	httpClient.DoFunc = func(ctx context.Context, req *http.Request) (*http.Response, error) {
+		return nil, expectedError
 	}
 	zebedeeClient := NewClient(host, httpClient)
 	session := newSession()
@@ -61,7 +78,7 @@ func Test_CreateCollection_RequestError(t *testing.T) {
 			_, err := zebedeeClient.CreateCollection(session, collectionDescription)
 
 			Convey("Then the expected error is returned", func() {
-				So(httpClient.RequestObjectCalls(), ShouldHaveLength, 1)
+				So(httpClient.DoCalls(), ShouldHaveLength, 1)
 				So(err, ShouldEqual, expectedError)
 			})
 		})
@@ -77,11 +94,8 @@ func newSession() Session {
 
 func newHttpClientMock() *mock.HttpClientMock {
 	return &mock.HttpClientMock{
-		DoFunc: func(r *http.Request) (*http.Response, error) {
+		DoFunc: func(ctx context.Context, req *http.Request) (*http.Response, error) {
 			return httptest.NewRecorder().Result(), nil
-		},
-		RequestObjectFunc: func(r *http.Request, expectedStatus int, entity interface{}) error {
-			return nil
 		},
 	}
 }

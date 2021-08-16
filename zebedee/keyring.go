@@ -14,7 +14,7 @@ func (z *zebedeeClient) ListUserKeyring(s Session, email string) ([]string, erro
 	}
 
 	var keys []string
-	err = z.HttpClient.RequestObject(req, 200, &keys)
+	err = z.requestObject(req, 200, &keys)
 	if err != nil {
 		return nil, err
 	}

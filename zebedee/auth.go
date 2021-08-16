@@ -22,7 +22,7 @@ func (z *zebedeeClient) OpenSession(c Credentials) (Session, error) {
 		return s, err
 	}
 
-	resp, err := z.HttpClient.Do(r)
+	resp, err := z.do(r)
 	if err != nil {
 		return s, err
 	}
@@ -65,7 +65,7 @@ func (z *zebedeeClient) GetPermissions(s Session, email string) (Permissions, er
 		return p, err
 	}
 
-	err = z.HttpClient.RequestObject(r, http.StatusOK, &p)
+	err = z.requestObject(r, http.StatusOK, &p)
 	if err != nil {
 		return p, err
 	}

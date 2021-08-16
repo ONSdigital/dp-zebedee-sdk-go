@@ -13,7 +13,7 @@ func (z *zebedeeClient) CreateUser(s Session, u User) (User, error) {
 		return user, err
 	}
 
-	err = z.HttpClient.RequestObject(req, http.StatusOK, &user)
+	err = z.requestObject(req, http.StatusOK, &user)
 	if err != nil {
 		return user, err
 	}
@@ -30,7 +30,7 @@ func (z *zebedeeClient) GetUser(s Session, email string) (User, error) {
 		return user, err
 	}
 
-	err = z.HttpClient.RequestObject(req, http.StatusOK, &user)
+	err = z.requestObject(req, http.StatusOK, &user)
 	if err != nil {
 		return user, err
 	}
@@ -46,7 +46,7 @@ func (z *zebedeeClient) GetUsers(s Session) ([]User, error) {
 	}
 
 	var users []User
-	err = z.HttpClient.RequestObject(req, http.StatusOK, &users)
+	err = z.requestObject(req, http.StatusOK, &users)
 	if err != nil {
 		return nil, err
 	}

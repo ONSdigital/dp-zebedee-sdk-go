@@ -4,6 +4,7 @@
 package mock
 
 import (
+	"context"
 	"net/http"
 	"sync"
 )
@@ -14,11 +15,8 @@ import (
 //
 //         // make and configure a mocked zebedee.HttpClient
 //         mockedHttpClient := &HttpClientMock{
-//             DoFunc: func(r *http.Request) (*http.Response, error) {
+//             DoFunc: func(ctx context.Context, req *http.Request) (*http.Response, error) {
 // 	               panic("mock out the Do method")
-//             },
-//             RequestObjectFunc: func(r *http.Request, expectedStatus int, entity interface{}) error {
-// 	               panic("mock out the RequestObject method")
 //             },
 //         }
 //
@@ -28,98 +26,52 @@ import (
 //     }
 type HttpClientMock struct {
 	// DoFunc mocks the Do method.
-	DoFunc func(r *http.Request) (*http.Response, error)
-
-	// RequestObjectFunc mocks the RequestObject method.
-	RequestObjectFunc func(r *http.Request, expectedStatus int, entity interface{}) error
+	DoFunc func(ctx context.Context, req *http.Request) (*http.Response, error)
 
 	// calls tracks calls to the methods.
 	calls struct {
 		// Do holds details about calls to the Do method.
 		Do []struct {
-			// R is the r argument value.
-			R *http.Request
-		}
-		// RequestObject holds details about calls to the RequestObject method.
-		RequestObject []struct {
-			// R is the r argument value.
-			R *http.Request
-			// ExpectedStatus is the expectedStatus argument value.
-			ExpectedStatus int
-			// Entity is the entity argument value.
-			Entity interface{}
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// Req is the req argument value.
+			Req *http.Request
 		}
 	}
-	lockDo            sync.RWMutex
-	lockRequestObject sync.RWMutex
+	lockDo sync.RWMutex
 }
 
 // Do calls DoFunc.
-func (mock *HttpClientMock) Do(r *http.Request) (*http.Response, error) {
+func (mock *HttpClientMock) Do(ctx context.Context, req *http.Request) (*http.Response, error) {
 	if mock.DoFunc == nil {
 		panic("HttpClientMock.DoFunc: method is nil but HttpClient.Do was just called")
 	}
 	callInfo := struct {
-		R *http.Request
+		Ctx context.Context
+		Req *http.Request
 	}{
-		R: r,
+		Ctx: ctx,
+		Req: req,
 	}
 	mock.lockDo.Lock()
 	mock.calls.Do = append(mock.calls.Do, callInfo)
 	mock.lockDo.Unlock()
-	return mock.DoFunc(r)
+	return mock.DoFunc(ctx, req)
 }
 
 // DoCalls gets all the calls that were made to Do.
 // Check the length with:
 //     len(mockedHttpClient.DoCalls())
 func (mock *HttpClientMock) DoCalls() []struct {
-	R *http.Request
+	Ctx context.Context
+	Req *http.Request
 } {
 	var calls []struct {
-		R *http.Request
+		Ctx context.Context
+		Req *http.Request
 	}
 	mock.lockDo.RLock()
 	calls = mock.calls.Do
 	mock.lockDo.RUnlock()
-	return calls
-}
-
-// RequestObject calls RequestObjectFunc.
-func (mock *HttpClientMock) RequestObject(r *http.Request, expectedStatus int, entity interface{}) error {
-	if mock.RequestObjectFunc == nil {
-		panic("HttpClientMock.RequestObjectFunc: method is nil but HttpClient.RequestObject was just called")
-	}
-	callInfo := struct {
-		R              *http.Request
-		ExpectedStatus int
-		Entity         interface{}
-	}{
-		R:              r,
-		ExpectedStatus: expectedStatus,
-		Entity:         entity,
-	}
-	mock.lockRequestObject.Lock()
-	mock.calls.RequestObject = append(mock.calls.RequestObject, callInfo)
-	mock.lockRequestObject.Unlock()
-	return mock.RequestObjectFunc(r, expectedStatus, entity)
-}
-
-// RequestObjectCalls gets all the calls that were made to RequestObject.
-// Check the length with:
-//     len(mockedHttpClient.RequestObjectCalls())
-func (mock *HttpClientMock) RequestObjectCalls() []struct {
-	R              *http.Request
-	ExpectedStatus int
-	Entity         interface{}
-} {
-	var calls []struct {
-		R              *http.Request
-		ExpectedStatus int
-		Entity         interface{}
-	}
-	mock.lockRequestObject.RLock()
-	calls = mock.calls.RequestObject
-	mock.lockRequestObject.RUnlock()
 	return calls
 }

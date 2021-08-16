@@ -36,7 +36,7 @@ func (z *zebedeeClient) CreateTeam(s Session, teamName string) (bool, error) {
 	}
 
 	var result bool
-	if err := z.HttpClient.RequestObject(req, http.StatusOK, &result); err != nil {
+	if err := z.requestObject(req, http.StatusOK, &result); err != nil {
 		return false, err
 	}
 
@@ -62,7 +62,7 @@ func (z *zebedeeClient) ListTeams(s Session) (TeamsList, error) {
 		return teams, err
 	}
 
-	if err := z.HttpClient.RequestObject(req, http.StatusOK, &teams); err != nil {
+	if err := z.requestObject(req, http.StatusOK, &teams); err != nil {
 		return teams, err
 	}
 
@@ -78,7 +78,7 @@ func (z *zebedeeClient) GetTeam(s Session, teamName string) (Team, error) {
 		return team, err
 	}
 
-	if err := z.HttpClient.RequestObject(req, http.StatusOK, &team); err != nil {
+	if err := z.requestObject(req, http.StatusOK, &team); err != nil {
 		return team, err
 	}
 

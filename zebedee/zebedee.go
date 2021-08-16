@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -103,9 +104,43 @@ func (z *zebedeeClient) newAuthenticatedRequest(uri, authToken, method string, e
 	return req, nil
 }
 
+//requestObject execute a JSON http request and unmarshal the response into the provided entity
+func (z *zebedeeClient) requestObject(r *http.Request, expectedStatus int, entity interface{}) error {
+	resp, err := z.do(r)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if err = checkResponseStatus(resp, expectedStatus); err != nil {
+		return err
+	}
+
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(b, &entity); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (z *zebedeeClient) do(req *http.Request) (*http.Response, error) {
+	return z.HttpClient.Do(req.Context(), req)
+}
+
+//discardResponse consume the response body and send it to dev/null
+func discardResponse(resp *http.Response) error {
+	_, err := io.Copy(ioutil.Discard, resp.Body)
+	return err
+}
+
 //executeRequestNoResponse execute the HTTP request, check for the expected status but discard the response body
 func (z *zebedeeClient) executeRequestNoResponse(r *http.Request, expectedStatus int) error {
-	resp, err := z.HttpClient.Do(r)
+	resp, err := z.do(r)
 	if err != nil {
 		return err
 	}
