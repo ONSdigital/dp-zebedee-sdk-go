@@ -10,10 +10,11 @@ import (
 )
 
 const (
-	incorrectStatusErrFmt = "request %s %s expected status %d but received %d"
+	incorrectStatusErrFmt         = "request %s %s expected status %d but received %d"
 	incorrectStatusWithBodyErrFmt = "request %s %s expected status %d but received %d response body: %s"
 )
 
+//go:generate moq -out mock/httpclient.go -pkg mock . HttpClient
 // HttpClient defines a Zebedee HTTP client
 type HttpClient interface {
 	Do(r *http.Request) (*http.Response, error)
@@ -66,7 +67,7 @@ func checkResponseStatus(resp *http.Response, expected int) error {
 	if resp.StatusCode != expected {
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			return fmt.Errorf("unexpected erro attempting to read error response body: %s", err.Error())
+			return fmt.Errorf("unexpected error attempting to read error response body: %s", err.Error())
 		}
 
 		if len(body) > 0 {
