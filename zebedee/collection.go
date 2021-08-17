@@ -150,3 +150,71 @@ func (z *zebedeeClient) UpdateCollectionContent(
 
 	return nil
 }
+
+//DeleteCollectionContent deletes content from a collection
+func (z *zebedeeClient) DeleteCollectionContent(s Session, id, contentUri string) error {
+	uri := fmt.Sprintf("/content/%s?uri=%s", id, contentUri)
+
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodDelete, nil)
+	if err != nil {
+		return err
+	}
+
+	var success bool
+	err = z.requestObject(req, http.StatusOK, &success)
+	if err != nil {
+		return err
+	}
+
+	if !success {
+		return fmt.Errorf("delete collection content request unsuccessful: %s", id)
+	}
+
+	return nil
+}
+
+//CompleteCollectionContent sets content in a collection to the complete state.
+// This is done once the content has been updated and the user is satisfied that the changes are complete
+func (z *zebedeeClient) CompleteCollectionContent(s Session, id, contentUri string, recursive bool) error {
+	uri := fmt.Sprintf("/complete/%s?uri=%s&recursive=%t", id, contentUri, recursive)
+
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, nil)
+	if err != nil {
+		return err
+	}
+
+	var success bool
+	err = z.requestObject(req, http.StatusOK, &success)
+	if err != nil {
+		return err
+	}
+
+	if !success {
+		return fmt.Errorf("complete collection content request unsuccessful: %s", id)
+	}
+
+	return nil
+}
+
+//ReviewCollectionContent sets content in a collection to the reviewed state.
+// This is done once the content has been reviewed by a user who is not the original editor.
+func (z *zebedeeClient) ReviewCollectionContent(s Session, id, contentUri string, recursive bool) error {
+	uri := fmt.Sprintf("/review/%s?uri=%s&recursive=%t", id, contentUri, recursive)
+
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, nil)
+	if err != nil {
+		return err
+	}
+
+	var success bool
+	err = z.requestObject(req, http.StatusOK, &success)
+	if err != nil {
+		return err
+	}
+
+	if !success {
+		return fmt.Errorf("review collection content request unsuccessful: %s", id)
+	}
+
+	return nil
+}
