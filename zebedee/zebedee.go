@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/ONSdigital/dp-net/request"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -95,7 +96,7 @@ func (z *zebedeeClient) newAuthenticatedRequest(uri, authToken, method string, e
 	}
 
 	req.Header.Set("content-type", "application/json")
-	req.Header.Set("X-Florence-Token", authToken)
+	req.Header.Set(request.FlorenceHeaderKey, authToken)
 	return req, nil
 }
 

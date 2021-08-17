@@ -2,6 +2,7 @@ package zebedee
 
 import (
 	"fmt"
+	"github.com/ONSdigital/dp-net/request"
 	"io"
 	"net/http"
 	"time"
@@ -135,7 +136,7 @@ func (z *zebedeeClient) UpdateCollectionContent(
 	}
 
 	req.Header.Set("content-type", "application/json")
-	req.Header.Set("X-Florence-Token", s.ID)
+	req.Header.Set(request.FlorenceHeaderKey, s.ID)
 
 	var success bool
 	err = z.requestObject(req, 200, &success)
