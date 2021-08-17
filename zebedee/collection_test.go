@@ -122,7 +122,7 @@ func Test_DeleteCollection_FalseResponse(t *testing.T) {
 			Convey("Then the expected error is returned", func() {
 				So(httpClient.DoCalls(), ShouldHaveLength, 1)
 				So(err, ShouldNotBeNil)
-				So(err.Error(), ShouldEqual, "delete collection request unsuccessful: 1234")
+				So(err.Error(), ShouldEqual, "delete collection request unsuccessful: "+collectionId)
 			})
 		})
 	})
@@ -201,7 +201,7 @@ func Test_UpdateCollectionContent_FalseResponse(t *testing.T) {
 			Convey("Then the expected error is returned", func() {
 				So(httpClient.DoCalls(), ShouldHaveLength, 1)
 				So(err, ShouldNotBeNil)
-				So(err.Error(), ShouldEqual, "update collection content request unsuccessful: collectionID")
+				So(err.Error(), ShouldEqual, "update collection content request unsuccessful: "+collectionId)
 			})
 		})
 	})
