@@ -82,7 +82,7 @@ func (z *zebedeeClient) DeleteCollection(s Session, id string) error {
 	}
 
 	if !success {
-		return fmt.Errorf("delete collection request unsuccesseful: %s", id)
+		return fmt.Errorf("delete collection request unsuccessful: %s", id)
 	}
 
 	return nil
@@ -105,7 +105,7 @@ func (z *zebedeeClient) ApproveCollection(s Session, id string) error {
 	}
 
 	if !success {
-		return fmt.Errorf("approve collection request unsuccesseful: %s", id)
+		return fmt.Errorf("approve collection request unsuccessful: %s", id)
 	}
 
 	return nil
@@ -126,7 +126,7 @@ func (z *zebedeeClient) UnlockCollection(s Session, id string) error {
 	}
 
 	if !success {
-		return fmt.Errorf("unlock collection request unsuccesseful: %s", id)
+		return fmt.Errorf("unlock collection request unsuccessful: %s", id)
 	}
 
 	return nil
@@ -181,7 +181,17 @@ func (z *zebedeeClient) UpdateCollectionContent(
 	req.Header.Set("content-type", "application/json")
 	req.Header.Set("X-Florence-Token", s.ID)
 
-	return z.executeRequestNoResponse(req, http.StatusOK)
+	var success bool
+	err = z.requestObject(req, 200, &success)
+	if err != nil {
+		return err
+	}
+
+	if !success {
+		return fmt.Errorf("update collection content request unsuccessful: %s", id)
+	}
+
+	return nil
 }
 
 //DeleteCollectionContent deletes content from a collection
