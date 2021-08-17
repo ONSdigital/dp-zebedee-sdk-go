@@ -16,7 +16,10 @@ import (
 )
 
 const (
-	host = "http://localhost:8082"
+	host         = "http://localhost:8082"
+	uri          = "/the/uri"
+	collectionId = "collectionID"
+	pageContent  = "{content}"
 )
 
 func Test_CreateCollection(t *testing.T) {
@@ -107,7 +110,6 @@ func Test_DeleteCollection(t *testing.T) {
 
 func Test_DeleteCollection_FalseResponse(t *testing.T) {
 	session := newSession()
-	collectionId := "1234"
 
 	Convey("Given an false response body is returned from Zebedee", t, func() {
 		responseBody := `false`
@@ -127,13 +129,12 @@ func Test_DeleteCollection_FalseResponse(t *testing.T) {
 }
 
 func Test_DeleteCollection_HttpError(t *testing.T) {
-	expectedError := errors.New("something broke")
-	httpClient := mockHttpError(expectedError)
-	zebedeeClient := NewClient(host, httpClient)
 	session := newSession()
 
-	Convey("Given an ID of a collection to delete", t, func() {
-		collectionId := "1234"
+	Convey("Given an error is returned from the HTTP client", t, func() {
+		expectedError := errors.New("something broke")
+		httpClient := mockHttpError(expectedError)
+		zebedeeClient := NewClient(host, httpClient)
 
 		Convey("When DeleteCollection is called", func() {
 			err := zebedeeClient.DeleteCollection(session, collectionId)
@@ -153,10 +154,7 @@ func Test_UpdateCollectionContent(t *testing.T) {
 	session := newSession()
 
 	Convey("Given a request to update collection content", t, func() {
-		collectionId := "collectionID"
-		uri := "/the/uri"
-		expectedContent := "{content}"
-		contentReader := strings.NewReader(expectedContent)
+		contentReader := strings.NewReader(pageContent)
 		overwriteExisting := false
 		recursive := false
 		validateJson := false
@@ -175,7 +173,7 @@ func Test_UpdateCollectionContent(t *testing.T) {
 
 				bodyBytes, _ := ioutil.ReadAll(req.Body)
 				bodyContent := string(bodyBytes)
-				So(bodyContent, ShouldEqual, expectedContent)
+				So(bodyContent, ShouldEqual, pageContent)
 			})
 
 			Convey("Then no error is returned", func() {
@@ -187,10 +185,7 @@ func Test_UpdateCollectionContent(t *testing.T) {
 
 func Test_UpdateCollectionContent_FalseResponse(t *testing.T) {
 	session := newSession()
-	collectionId := "collectionID"
-	uri := "/the/uri"
-	expectedContent := "{content}"
-	contentReader := strings.NewReader(expectedContent)
+	contentReader := strings.NewReader(pageContent)
 	overwriteExisting := false
 	recursive := false
 	validateJson := false
@@ -213,10 +208,7 @@ func Test_UpdateCollectionContent_FalseResponse(t *testing.T) {
 }
 
 func Test_UpdateCollectionContent_HttpError(t *testing.T) {
-	collectionId := "collectionID"
-	uri := "/the/uri"
-	expectedContent := "{content}"
-	contentReader := strings.NewReader(expectedContent)
+	contentReader := strings.NewReader(pageContent)
 	overwriteExisting := false
 	recursive := false
 	validateJson := false
@@ -245,10 +237,7 @@ func Test_UpdateCollectionContent_overwriteExisting(t *testing.T) {
 	session := newSession()
 
 	Convey("Given a request to update collection content with overwriteExisting set to true", t, func() {
-		collectionId := "collectionID"
-		uri := "/the/uri"
-		expectedContent := "{content}"
-		contentReader := strings.NewReader(expectedContent)
+		contentReader := strings.NewReader(pageContent)
 		overwriteExisting := true
 		recursive := false
 		validateJson := false
@@ -267,7 +256,7 @@ func Test_UpdateCollectionContent_overwriteExisting(t *testing.T) {
 
 				bodyBytes, _ := ioutil.ReadAll(req.Body)
 				bodyContent := string(bodyBytes)
-				So(bodyContent, ShouldEqual, expectedContent)
+				So(bodyContent, ShouldEqual, pageContent)
 			})
 
 			Convey("Then no error is returned", func() {
@@ -284,10 +273,7 @@ func Test_UpdateCollectionContent_recursive(t *testing.T) {
 	session := newSession()
 
 	Convey("Given a request to update collection content with recursive set to true", t, func() {
-		collectionId := "collectionID"
-		uri := "/the/uri"
-		expectedContent := "{content}"
-		contentReader := strings.NewReader(expectedContent)
+		contentReader := strings.NewReader(pageContent)
 		overwriteExisting := false
 		recursive := true
 		validateJson := false
@@ -306,7 +292,7 @@ func Test_UpdateCollectionContent_recursive(t *testing.T) {
 
 				bodyBytes, _ := ioutil.ReadAll(req.Body)
 				bodyContent := string(bodyBytes)
-				So(bodyContent, ShouldEqual, expectedContent)
+				So(bodyContent, ShouldEqual, pageContent)
 			})
 
 			Convey("Then no error is returned", func() {
@@ -323,10 +309,7 @@ func Test_UpdateCollectionContent_validateJson(t *testing.T) {
 	session := newSession()
 
 	Convey("Given a request to update collection content with validateJson set to true", t, func() {
-		collectionId := "collectionID"
-		uri := "/the/uri"
-		expectedContent := "{content}"
-		contentReader := strings.NewReader(expectedContent)
+		contentReader := strings.NewReader(pageContent)
 		overwriteExisting := false
 		recursive := false
 		validateJson := true
@@ -345,7 +328,7 @@ func Test_UpdateCollectionContent_validateJson(t *testing.T) {
 
 				bodyBytes, _ := ioutil.ReadAll(req.Body)
 				bodyContent := string(bodyBytes)
-				So(bodyContent, ShouldEqual, expectedContent)
+				So(bodyContent, ShouldEqual, pageContent)
 			})
 
 			Convey("Then no error is returned", func() {
