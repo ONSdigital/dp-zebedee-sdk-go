@@ -21,6 +21,7 @@ Golang SDK for Zebedee CMS.
 - Delete collection
 - Update collection
 - List collections
+- Update collection content
 
 #### Teams
 - Add team member
