@@ -17,10 +17,10 @@ type CollectionsAPI interface {
 	DeleteCollection(s Session, id string) error
 	GetCollections(s Session) ([]CollectionDescription, error)
 	UpdateCollection(s Session, desc CollectionDescription) error
-	UpdateCollectionContent(s Session, id, contentUri string, content io.Reader, overwriteExisting, recursive, validateJson bool) error
+	UpdateCollectionContent(s Session, id, contentUri string, content interface{}) error
 	DeleteCollectionContent(s Session, id, contentUri string) error
-	CompleteCollectionContent(s Session, id string, contentUri string, recursive bool) error
-	ReviewCollectionContent(s Session, id string, contentUri string, recursive bool) error
+	CompleteCollectionContent(s Session, id string, contentUri string) error
+	ReviewCollectionContent(s Session, id string, contentUri string) error
 	ApproveCollection(s Session, id string) error
 	UnlockCollection(s Session, id string) error
 	PublishCollection(s Session, id string) error
