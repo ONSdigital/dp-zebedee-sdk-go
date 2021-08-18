@@ -115,13 +115,15 @@ func (z *zebedeeClient) UpdateCollection(s Session, desc CollectionDescription) 
 }
 
 //UpdateCollectionContent updates content within a collection
-//  overwriteExisting (default:true) - if set to false, any existing content will not be overwritten
-//  recursive (default:false) - if set to true, all associated files alongside the page will be added to the collection's in progress directory
-//              if set to false, only the data.json file will be added to the collection's in progress directory
-//  validateJson (default:true) - if set to true, the json will be validated to ensure it's a valid page JSON structure
-func (z *zebedeeClient) UpdateCollectionContent(
-	s Session, id, contentUri string, content interface{},
-	overwriteExisting, recursive, validateJson bool) error {
+func (z *zebedeeClient) UpdateCollectionContent(s Session, id, contentUri string, content interface{}) error {
+
+	// using defaults for these flags until it's understood where the alternatives are needed.
+	overwriteExisting := true // if false, any existing content will not be overwritten
+	// if recursive=true, all associated files alongside the page will be added to the collection's in progress directory
+	// if recursive=false, only the data.json file will be added to the collection's in progress directory
+	recursive := false
+	//  if true, the json will be validated to ensure it's a valid page JSON structure
+	validateJson := true
 
 	uri := fmt.Sprintf("/content/%s?uri=%s&overwriteExisting=%t&recursive=%t&validateJson=%t",
 		id, contentUri, overwriteExisting, recursive, validateJson)

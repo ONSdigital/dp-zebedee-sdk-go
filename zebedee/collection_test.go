@@ -155,19 +155,16 @@ func Test_UpdateCollectionContent(t *testing.T) {
 
 	Convey("Given a request to update collection content", t, func() {
 		content := getContent()
-		overwriteExisting := false
-		recursive := false
-		validateJson := false
 
 		Convey("When UpdateCollectionContent is called", func() {
-			err := zebedeeClient.UpdateCollectionContent(session, collectionId, uri, content, overwriteExisting, recursive, validateJson)
+			err := zebedeeClient.UpdateCollectionContent(session, collectionId, uri, content)
 
 			Convey("Then the expected request is sent to the HTTP client", func() {
 				So(httpClient.DoCalls(), ShouldHaveLength, 1)
 
 				req := httpClient.DoCalls()[0].Req
 				So(req.Method, ShouldEqual, http.MethodPost)
-				So(req.URL.String(), ShouldEqual, host+"/content/collectionID?uri=/the/uri&overwriteExisting=false&recursive=false&validateJson=false")
+				So(req.URL.String(), ShouldEqual, host+"/content/collectionID?uri=/the/uri&overwriteExisting=true&recursive=false&validateJson=true")
 				So(req.Header.Get(request.FlorenceHeaderKey), ShouldEqual, session.ID)
 				So(req.Header.Get("content-type"), ShouldEqual, "application/json")
 
@@ -185,9 +182,6 @@ func Test_UpdateCollectionContent(t *testing.T) {
 
 func Test_UpdateCollectionContent_FalseResponse(t *testing.T) {
 	session := newSession()
-	overwriteExisting := false
-	recursive := false
-	validateJson := false
 
 	Convey("Given a mocked zebedee response that returns false", t, func() {
 		responseBody := `false`
@@ -196,7 +190,7 @@ func Test_UpdateCollectionContent_FalseResponse(t *testing.T) {
 		content := getContent()
 
 		Convey("When UpdateCollectionContent is called", func() {
-			err := zebedeeClient.UpdateCollectionContent(session, collectionId, uri, content, overwriteExisting, recursive, validateJson)
+			err := zebedeeClient.UpdateCollectionContent(session, collectionId, uri, content)
 
 			Convey("Then the expected error is returned", func() {
 				So(httpClient.DoCalls(), ShouldHaveLength, 1)
@@ -208,9 +202,6 @@ func Test_UpdateCollectionContent_FalseResponse(t *testing.T) {
 }
 
 func Test_UpdateCollectionContent_HttpError(t *testing.T) {
-	overwriteExisting := false
-	recursive := false
-	validateJson := false
 	session := newSession()
 
 	Convey("Given an error is returned from the HTTP client", t, func() {
@@ -220,119 +211,11 @@ func Test_UpdateCollectionContent_HttpError(t *testing.T) {
 		content := getContent()
 
 		Convey("When UpdateCollectionContent is called", func() {
-			err := zebedeeClient.UpdateCollectionContent(session, collectionId, uri, content, overwriteExisting, recursive, validateJson)
+			err := zebedeeClient.UpdateCollectionContent(session, collectionId, uri, content)
 
 			Convey("Then the expected error is returned", func() {
 				So(httpClient.DoCalls(), ShouldHaveLength, 1)
 				So(err, ShouldEqual, expectedError)
-			})
-		})
-	})
-}
-
-func Test_UpdateCollectionContent_overwriteExisting(t *testing.T) {
-	responseBody := `true`
-	httpClient := mockHttpResponse(http.StatusOK, responseBody)
-	zebedeeClient := NewClient(host, httpClient)
-	session := newSession()
-
-	Convey("Given a request to update collection content with overwriteExisting set to true", t, func() {
-		content := getContent()
-		overwriteExisting := true
-		recursive := false
-		validateJson := false
-
-		Convey("When UpdateCollectionContent is called", func() {
-			err := zebedeeClient.UpdateCollectionContent(session, collectionId, uri, content, overwriteExisting, recursive, validateJson)
-
-			Convey("Then the expected request is sent to the HTTP client", func() {
-				So(httpClient.DoCalls(), ShouldHaveLength, 1)
-
-				req := httpClient.DoCalls()[0].Req
-				So(req.Method, ShouldEqual, http.MethodPost)
-				So(req.URL.String(), ShouldEqual, host+"/content/collectionID?uri=/the/uri&overwriteExisting=true&recursive=false&validateJson=false")
-				So(req.Header.Get(request.FlorenceHeaderKey), ShouldEqual, session.ID)
-				So(req.Header.Get("content-type"), ShouldEqual, "application/json")
-
-				bodyBytes, _ := ioutil.ReadAll(req.Body)
-				bodyContent := string(bodyBytes)
-				So(bodyContent, ShouldEqual, pageContent)
-			})
-
-			Convey("Then no error is returned", func() {
-				So(err, ShouldBeNil)
-			})
-		})
-	})
-}
-
-func Test_UpdateCollectionContent_recursive(t *testing.T) {
-	responseBody := `true`
-	httpClient := mockHttpResponse(http.StatusOK, responseBody)
-	zebedeeClient := NewClient(host, httpClient)
-	session := newSession()
-
-	Convey("Given a request to update collection content with recursive set to true", t, func() {
-		content := getContent()
-		overwriteExisting := false
-		recursive := true
-		validateJson := false
-
-		Convey("When UpdateCollectionContent is called", func() {
-			err := zebedeeClient.UpdateCollectionContent(session, collectionId, uri, content, overwriteExisting, recursive, validateJson)
-
-			Convey("Then the expected request is sent to the HTTP client", func() {
-				So(httpClient.DoCalls(), ShouldHaveLength, 1)
-
-				req := httpClient.DoCalls()[0].Req
-				So(req.Method, ShouldEqual, http.MethodPost)
-				So(req.URL.String(), ShouldEqual, host+"/content/collectionID?uri=/the/uri&overwriteExisting=false&recursive=true&validateJson=false")
-				So(req.Header.Get(request.FlorenceHeaderKey), ShouldEqual, session.ID)
-				So(req.Header.Get("content-type"), ShouldEqual, "application/json")
-
-				bodyBytes, _ := ioutil.ReadAll(req.Body)
-				bodyContent := string(bodyBytes)
-				So(bodyContent, ShouldEqual, pageContent)
-			})
-
-			Convey("Then no error is returned", func() {
-				So(err, ShouldBeNil)
-			})
-		})
-	})
-}
-
-func Test_UpdateCollectionContent_validateJson(t *testing.T) {
-	responseBody := `true`
-	httpClient := mockHttpResponse(http.StatusOK, responseBody)
-	zebedeeClient := NewClient(host, httpClient)
-	session := newSession()
-
-	Convey("Given a request to update collection content with validateJson set to true", t, func() {
-		content := getContent()
-		overwriteExisting := false
-		recursive := false
-		validateJson := true
-
-		Convey("When UpdateCollectionContent is called", func() {
-			err := zebedeeClient.UpdateCollectionContent(session, collectionId, uri, content, overwriteExisting, recursive, validateJson)
-
-			Convey("Then the expected request is sent to the HTTP client", func() {
-				So(httpClient.DoCalls(), ShouldHaveLength, 1)
-
-				req := httpClient.DoCalls()[0].Req
-				So(req.Method, ShouldEqual, http.MethodPost)
-				So(req.URL.String(), ShouldEqual, host+"/content/collectionID?uri=/the/uri&overwriteExisting=false&recursive=false&validateJson=true")
-				So(req.Header.Get(request.FlorenceHeaderKey), ShouldEqual, session.ID)
-				So(req.Header.Get("content-type"), ShouldEqual, "application/json")
-
-				bodyBytes, _ := ioutil.ReadAll(req.Body)
-				bodyContent := string(bodyBytes)
-				So(bodyContent, ShouldEqual, pageContent)
-			})
-
-			Convey("Then no error is returned", func() {
-				So(err, ShouldBeNil)
 			})
 		})
 	})
