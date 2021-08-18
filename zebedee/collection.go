@@ -218,3 +218,68 @@ func (z *zebedeeClient) ReviewCollectionContent(s Session, id, contentUri string
 
 	return nil
 }
+
+// ApproveCollection approves a collection with the provided ID.
+// The approval can only take place once all collection content is reviewed
+// A scheduled collection will only be published if the collection is approved
+func (z *zebedeeClient) ApproveCollection(s Session, id string) error {
+	uri := fmt.Sprintf("/approve/%s", id)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, nil)
+	if err != nil {
+		return err
+	}
+
+	var success bool
+	err = z.requestObject(req, 200, &success)
+	if err != nil {
+		return err
+	}
+
+	if !success {
+		return fmt.Errorf("approve collection request unsuccessful: %s", id)
+	}
+
+	return nil
+}
+
+// UnlockCollection reverses the approval state, allowing collection content to be edited
+func (z *zebedeeClient) UnlockCollection(s Session, id string) error {
+	uri := fmt.Sprintf("/unlock/%s", id)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, nil)
+	if err != nil {
+		return err
+	}
+
+	var success bool
+	err = z.requestObject(req, 200, &success)
+	if err != nil {
+		return err
+	}
+
+	if !success {
+		return fmt.Errorf("unlock collection request unsuccessful: %s", id)
+	}
+
+	return nil
+}
+
+// PublishCollection publishes the updated collection content to the public website
+func (z *zebedeeClient) PublishCollection(s Session, id string) error {
+	uri := fmt.Sprintf("/publish/%s", id)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, nil)
+	if err != nil {
+		return err
+	}
+
+	var success bool
+	err = z.requestObject(req, 200, &success)
+	if err != nil {
+		return err
+	}
+
+	if !success {
+		return fmt.Errorf("publish collection request unsuccessful: %s", id)
+	}
+
+	return nil
+}

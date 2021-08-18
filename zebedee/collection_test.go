@@ -606,6 +606,210 @@ func Test_ReviewCollectionContent_HttpError(t *testing.T) {
 	})
 }
 
+func Test_ApproveCollection(t *testing.T) {
+	session := newSession()
+	expectedUrl := fmt.Sprintf("%s/approve/%s", host, collectionId)
+
+	Convey("Given an mocked successful response from Zebedee", t, func() {
+		responseBody := `true`
+		httpClient := mockHttpResponse(http.StatusOK, responseBody)
+		zebedeeClient := NewClient(host, httpClient)
+
+		Convey("When ApproveCollection is called", func() {
+			err := zebedeeClient.ApproveCollection(session, collectionId)
+
+			Convey("Then the expected request is sent to the HTTP client", func() {
+				So(httpClient.DoCalls(), ShouldHaveLength, 1)
+
+				req := httpClient.DoCalls()[0].Req
+				So(req.Method, ShouldEqual, http.MethodPost)
+				So(req.URL.String(), ShouldEqual, expectedUrl)
+				So(req.Header.Get(request.FlorenceHeaderKey), ShouldEqual, session.ID)
+				So(req.Header.Get("content-type"), ShouldEqual, "application/json")
+			})
+
+			Convey("Then no error is returned", func() {
+				So(err, ShouldBeNil)
+			})
+		})
+	})
+}
+
+func Test_ApproveCollection_FalseResponse(t *testing.T) {
+	session := newSession()
+
+	Convey("Given an false response body is returned from Zebedee", t, func() {
+		responseBody := `false`
+		httpClient := mockHttpResponse(http.StatusOK, responseBody)
+		zebedeeClient := NewClient(host, httpClient)
+
+		Convey("When ApproveCollection is called", func() {
+			err := zebedeeClient.ApproveCollection(session, collectionId)
+
+			Convey("Then the expected error is returned", func() {
+				So(httpClient.DoCalls(), ShouldHaveLength, 1)
+				So(err, ShouldNotBeNil)
+				So(err.Error(), ShouldEqual, "approve collection request unsuccessful: "+collectionId)
+			})
+		})
+	})
+}
+
+func Test_ApproveCollection_HttpError(t *testing.T) {
+	session := newSession()
+
+	Convey("Given an error is returned from the HTTP client", t, func() {
+		expectedError := errors.New("something broke")
+		httpClient := mockHttpError(expectedError)
+		zebedeeClient := NewClient(host, httpClient)
+
+		Convey("When ApproveCollection is called", func() {
+			err := zebedeeClient.ApproveCollection(session, collectionId)
+
+			Convey("Then the expected error is returned", func() {
+				So(httpClient.DoCalls(), ShouldHaveLength, 1)
+				So(err, ShouldEqual, expectedError)
+			})
+		})
+	})
+}
+
+func Test_UnlockCollection(t *testing.T) {
+	session := newSession()
+	expectedUrl := fmt.Sprintf("%s/unlock/%s", host, collectionId)
+
+	Convey("Given an mocked successful response from Zebedee", t, func() {
+		responseBody := `true`
+		httpClient := mockHttpResponse(http.StatusOK, responseBody)
+		zebedeeClient := NewClient(host, httpClient)
+
+		Convey("When UnlockCollection is called", func() {
+			err := zebedeeClient.UnlockCollection(session, collectionId)
+
+			Convey("Then the expected request is sent to the HTTP client", func() {
+				So(httpClient.DoCalls(), ShouldHaveLength, 1)
+
+				req := httpClient.DoCalls()[0].Req
+				So(req.Method, ShouldEqual, http.MethodPost)
+				So(req.URL.String(), ShouldEqual, expectedUrl)
+				So(req.Header.Get(request.FlorenceHeaderKey), ShouldEqual, session.ID)
+				So(req.Header.Get("content-type"), ShouldEqual, "application/json")
+			})
+
+			Convey("Then no error is returned", func() {
+				So(err, ShouldBeNil)
+			})
+		})
+	})
+}
+
+func Test_UnlockCollection_FalseResponse(t *testing.T) {
+	session := newSession()
+
+	Convey("Given an false response body is returned from Zebedee", t, func() {
+		responseBody := `false`
+		httpClient := mockHttpResponse(http.StatusOK, responseBody)
+		zebedeeClient := NewClient(host, httpClient)
+
+		Convey("When UnlockCollection is called", func() {
+			err := zebedeeClient.UnlockCollection(session, collectionId)
+
+			Convey("Then the expected error is returned", func() {
+				So(httpClient.DoCalls(), ShouldHaveLength, 1)
+				So(err, ShouldNotBeNil)
+				So(err.Error(), ShouldEqual, "unlock collection request unsuccessful: "+collectionId)
+			})
+		})
+	})
+}
+
+func Test_UnlockCollection_HttpError(t *testing.T) {
+	session := newSession()
+
+	Convey("Given an error is returned from the HTTP client", t, func() {
+		expectedError := errors.New("something broke")
+		httpClient := mockHttpError(expectedError)
+		zebedeeClient := NewClient(host, httpClient)
+
+		Convey("When UnlockCollection is called", func() {
+			err := zebedeeClient.UnlockCollection(session, collectionId)
+
+			Convey("Then the expected error is returned", func() {
+				So(httpClient.DoCalls(), ShouldHaveLength, 1)
+				So(err, ShouldEqual, expectedError)
+			})
+		})
+	})
+}
+
+func Test_PublishCollection(t *testing.T) {
+	session := newSession()
+	expectedUrl := fmt.Sprintf("%s/publish/%s", host, collectionId)
+
+	Convey("Given an mocked successful response from Zebedee", t, func() {
+		responseBody := `true`
+		httpClient := mockHttpResponse(http.StatusOK, responseBody)
+		zebedeeClient := NewClient(host, httpClient)
+
+		Convey("When PublishCollection is called", func() {
+			err := zebedeeClient.PublishCollection(session, collectionId)
+
+			Convey("Then the expected request is sent to the HTTP client", func() {
+				So(httpClient.DoCalls(), ShouldHaveLength, 1)
+
+				req := httpClient.DoCalls()[0].Req
+				So(req.Method, ShouldEqual, http.MethodPost)
+				So(req.URL.String(), ShouldEqual, expectedUrl)
+				So(req.Header.Get(request.FlorenceHeaderKey), ShouldEqual, session.ID)
+				So(req.Header.Get("content-type"), ShouldEqual, "application/json")
+			})
+
+			Convey("Then no error is returned", func() {
+				So(err, ShouldBeNil)
+			})
+		})
+	})
+}
+
+func Test_PublishCollection_FalseResponse(t *testing.T) {
+	session := newSession()
+
+	Convey("Given an false response body is returned from Zebedee", t, func() {
+		responseBody := `false`
+		httpClient := mockHttpResponse(http.StatusOK, responseBody)
+		zebedeeClient := NewClient(host, httpClient)
+
+		Convey("When PublishCollection is called", func() {
+			err := zebedeeClient.PublishCollection(session, collectionId)
+
+			Convey("Then the expected error is returned", func() {
+				So(httpClient.DoCalls(), ShouldHaveLength, 1)
+				So(err, ShouldNotBeNil)
+				So(err.Error(), ShouldEqual, "publish collection request unsuccessful: "+collectionId)
+			})
+		})
+	})
+}
+
+func Test_PublishCollection_HttpError(t *testing.T) {
+	session := newSession()
+
+	Convey("Given an error is returned from the HTTP client", t, func() {
+		expectedError := errors.New("something broke")
+		httpClient := mockHttpError(expectedError)
+		zebedeeClient := NewClient(host, httpClient)
+
+		Convey("When PublishCollection is called", func() {
+			err := zebedeeClient.PublishCollection(session, collectionId)
+
+			Convey("Then the expected error is returned", func() {
+				So(httpClient.DoCalls(), ShouldHaveLength, 1)
+				So(err, ShouldEqual, expectedError)
+			})
+		})
+	})
+}
+
 func newSession() Session {
 	return Session{
 		Email: "testuser@zebedeesdktest.com",
