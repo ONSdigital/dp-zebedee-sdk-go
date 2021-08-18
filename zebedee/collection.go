@@ -2,8 +2,6 @@ package zebedee
 
 import (
 	"fmt"
-	"github.com/ONSdigital/dp-net/request"
-	"io"
 	"net/http"
 	"time"
 )
@@ -117,26 +115,23 @@ func (z *zebedeeClient) UpdateCollection(s Session, desc CollectionDescription) 
 }
 
 //UpdateCollectionContent updates content within a collection
-//  overwriteExisting (default:true) - if set to false, any existing content will not be overwritten
-//  recursive (default:false) - if set to true, all associated files alongside the page will be added to the collection's in progress directory
-//              if set to false, only the data.json file will be added to the collection's in progress directory
-//  validateJson (default:true) - if set to true, the json will be validated to ensure it's a valid page JSON structure
-func (z *zebedeeClient) UpdateCollectionContent(
-	s Session,
-	id, contentUri string,
-	content io.Reader,
-	overwriteExisting, recursive, validateJson bool) error {
+func (z *zebedeeClient) UpdateCollectionContent(s Session, id, contentUri string, content interface{}) error {
 
-	url := fmt.Sprintf("%s/content/%s?uri=%s&overwriteExisting=%t&recursive=%t&validateJson=%t",
-		z.Host, id, contentUri, overwriteExisting, recursive, validateJson)
+	// using defaults for these flags until it's understood where the alternatives are needed.
+	overwriteExisting := true // if false, any existing content will not be overwritten
+	// if recursive=true, all associated files alongside the page will be added to the collection's in progress directory
+	// if recursive=false, only the data.json file will be added to the collection's in progress directory
+	recursive := false
+	//  if true, the json will be validated to ensure it's a valid page JSON structure
+	validateJson := true
 
-	req, err := http.NewRequest(http.MethodPost, url, content)
+	uri := fmt.Sprintf("/content/%s?uri=%s&overwriteExisting=%t&recursive=%t&validateJson=%t",
+		id, contentUri, overwriteExisting, recursive, validateJson)
+
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, content)
 	if err != nil {
 		return err
 	}
-
-	req.Header.Set("content-type", "application/json")
-	req.Header.Set(request.FlorenceHeaderKey, s.ID)
 
 	var success bool
 	err = z.requestObject(req, 200, &success)
@@ -175,7 +170,13 @@ func (z *zebedeeClient) DeleteCollectionContent(s Session, id, contentUri string
 
 //CompleteCollectionContent sets content in a collection to the complete state.
 // This is done once the content has been updated and the user is satisfied that the changes are complete
-func (z *zebedeeClient) CompleteCollectionContent(s Session, id, contentUri string, recursive bool) error {
+func (z *zebedeeClient) CompleteCollectionContent(s Session, id, contentUri string) error {
+
+	// using default for the recursive flag until it's understood where the alternative is needed.
+	// if recursive=true, all associated files alongside the page will be added to the collection's in progress directory
+	// if recursive=false, only the data.json file will be added to the collection's in progress directory
+	recursive := false
+
 	uri := fmt.Sprintf("/complete/%s?uri=%s&recursive=%t", id, contentUri, recursive)
 
 	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, nil)
@@ -198,7 +199,13 @@ func (z *zebedeeClient) CompleteCollectionContent(s Session, id, contentUri stri
 
 //ReviewCollectionContent sets content in a collection to the reviewed state.
 // This is done once the content has been reviewed by a user who is not the original editor.
-func (z *zebedeeClient) ReviewCollectionContent(s Session, id, contentUri string, recursive bool) error {
+func (z *zebedeeClient) ReviewCollectionContent(s Session, id, contentUri string) error {
+
+	// using default for the recursive flag until it's understood where the alternative is needed.
+	// if recursive=true, all associated files alongside the page will be added to the collection's in progress directory
+	// if recursive=false, only the data.json file will be added to the collection's in progress directory
+	recursive := false
+
 	uri := fmt.Sprintf("/review/%s?uri=%s&recursive=%t", id, contentUri, recursive)
 
 	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, nil)
