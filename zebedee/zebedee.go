@@ -17,7 +17,7 @@ type CollectionsAPI interface {
 	DeleteCollection(s Session, id string) error
 	GetCollections(s Session) ([]CollectionDescription, error)
 	UpdateCollection(s Session, desc CollectionDescription) error
-	UpdateCollectionContent(s Session, id, contentUri string, content io.Reader, overwriteExisting, recursive, validateJson bool) error
+	UpdateCollectionContent(s Session, id, contentUri string, content interface{}, overwriteExisting, recursive, validateJson bool) error
 }
 
 //PermissionsAPI defines the user permissions endpoints in Zebedee CMS

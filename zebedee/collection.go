@@ -2,8 +2,6 @@ package zebedee
 
 import (
 	"fmt"
-	"github.com/ONSdigital/dp-net/request"
-	"io"
 	"net/http"
 	"time"
 )
@@ -122,21 +120,16 @@ func (z *zebedeeClient) UpdateCollection(s Session, desc CollectionDescription) 
 //              if set to false, only the data.json file will be added to the collection's in progress directory
 //  validateJson (default:true) - if set to true, the json will be validated to ensure it's a valid page JSON structure
 func (z *zebedeeClient) UpdateCollectionContent(
-	s Session,
-	id, contentUri string,
-	content io.Reader,
+	s Session, id, contentUri string, content interface{},
 	overwriteExisting, recursive, validateJson bool) error {
 
-	url := fmt.Sprintf("%s/content/%s?uri=%s&overwriteExisting=%t&recursive=%t&validateJson=%t",
-		z.Host, id, contentUri, overwriteExisting, recursive, validateJson)
+	uri := fmt.Sprintf("/content/%s?uri=%s&overwriteExisting=%t&recursive=%t&validateJson=%t",
+		id, contentUri, overwriteExisting, recursive, validateJson)
 
-	req, err := http.NewRequest(http.MethodPost, url, content)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, content)
 	if err != nil {
 		return err
 	}
-
-	req.Header.Set("content-type", "application/json")
-	req.Header.Set(request.FlorenceHeaderKey, s.ID)
 
 	var success bool
 	err = z.requestObject(req, 200, &success)
