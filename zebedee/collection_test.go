@@ -300,8 +300,7 @@ func Test_CompleteCollectionContent(t *testing.T) {
 	recursive := false
 
 	Convey("Given a mock HTTP client that returns a successful response", t, func() {
-		responseBody := `true`
-		httpClient := mockHttpResponse(http.StatusOK, responseBody)
+		httpClient := mockHttpResponse(http.StatusOK, "")
 		zebedeeClient := NewClient(host, httpClient)
 		expectedUrl := fmt.Sprintf("%s/complete/%s?uri=%s&recursive=%t", host, collectionId, uri, recursive)
 
@@ -319,26 +318,6 @@ func Test_CompleteCollectionContent(t *testing.T) {
 
 			Convey("Then no error is returned", func() {
 				So(err, ShouldBeNil)
-			})
-		})
-	})
-}
-
-func Test_CompleteCollectionContent_FalseResponse(t *testing.T) {
-	session := newSession()
-
-	Convey("Given a mock HTTP client that returns a false response", t, func() {
-		responseBody := `false`
-		httpClient := mockHttpResponse(http.StatusOK, responseBody)
-		zebedeeClient := NewClient(host, httpClient)
-
-		Convey("When CompleteCollectionContent is called", func() {
-			err := zebedeeClient.CompleteCollectionContent(session, collectionId, uri)
-
-			Convey("Then the expected error is returned", func() {
-				So(httpClient.DoCalls(), ShouldHaveLength, 1)
-				So(err, ShouldNotBeNil)
-				So(err.Error(), ShouldEqual, "complete collection content request unsuccessful: "+collectionId)
 			})
 		})
 	})
@@ -368,8 +347,7 @@ func Test_ReviewCollectionContent(t *testing.T) {
 	recursive := false
 
 	Convey("Given a mock HTTP client that returns a successful response", t, func() {
-		responseBody := `true`
-		httpClient := mockHttpResponse(http.StatusOK, responseBody)
+		httpClient := mockHttpResponse(http.StatusOK, "")
 		zebedeeClient := NewClient(host, httpClient)
 		expectedUrl := fmt.Sprintf("%s/review/%s?uri=%s&recursive=%t", host, collectionId, uri, recursive)
 
@@ -387,26 +365,6 @@ func Test_ReviewCollectionContent(t *testing.T) {
 
 			Convey("Then no error is returned", func() {
 				So(err, ShouldBeNil)
-			})
-		})
-	})
-}
-
-func Test_ReviewCollectionContent_FalseResponse(t *testing.T) {
-	session := newSession()
-
-	Convey("Given a mock HTTP client that returns a false response", t, func() {
-		responseBody := `false`
-		httpClient := mockHttpResponse(http.StatusOK, responseBody)
-		zebedeeClient := NewClient(host, httpClient)
-
-		Convey("When ReviewCollectionContent is called", func() {
-			err := zebedeeClient.ReviewCollectionContent(session, collectionId, uri)
-
-			Convey("Then the expected error is returned", func() {
-				So(httpClient.DoCalls(), ShouldHaveLength, 1)
-				So(err, ShouldNotBeNil)
-				So(err.Error(), ShouldEqual, "review collection content request unsuccessful: "+collectionId)
 			})
 		})
 	})

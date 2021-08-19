@@ -184,14 +184,9 @@ func (z *zebedeeClient) CompleteCollectionContent(s Session, id, contentUri stri
 		return err
 	}
 
-	var success bool
-	err = z.requestObject(req, http.StatusOK, &success)
+	err = z.executeRequestNoResponse(req, http.StatusOK)
 	if err != nil {
 		return err
-	}
-
-	if !success {
-		return fmt.Errorf("complete collection content request unsuccessful: %s", id)
 	}
 
 	return nil
@@ -213,14 +208,9 @@ func (z *zebedeeClient) ReviewCollectionContent(s Session, id, contentUri string
 		return err
 	}
 
-	var success bool
-	err = z.requestObject(req, http.StatusOK, &success)
+	err = z.executeRequestNoResponse(req, http.StatusOK)
 	if err != nil {
 		return err
-	}
-
-	if !success {
-		return fmt.Errorf("review collection content request unsuccessful: %s", id)
 	}
 
 	return nil
