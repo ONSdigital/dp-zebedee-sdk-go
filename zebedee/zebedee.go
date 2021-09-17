@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/ONSdigital/dp-net/request"
 	"io"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/ONSdigital/dp-net/request"
 )
 
 //CollectionsAPI defines the collections endpoints in Zebedee CMS
@@ -58,7 +59,7 @@ type TeamsAPI interface {
 
 //KeyringAPI defines the Keyring endpoints in Zebedee CMS
 type KeyringAPI interface {
-	ListUserKeyring(s Session, email string) ([]string, error)
+	ListUserKeyring(s Session, email, src string) ([]string, error)
 }
 
 //Client defines a client for the Zebedee CMS API
