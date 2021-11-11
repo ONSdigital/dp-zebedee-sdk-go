@@ -25,6 +25,7 @@ type CollectionsAPI interface {
 	ApproveCollection(s Session, id string) error
 	UnlockCollection(s Session, id string) error
 	PublishCollection(s Session, id string) error
+	GetCollectionDetails(s Session, id string) (CollectionDetails, error)
 }
 
 //PermissionsAPI defines the user permissions endpoints in Zebedee CMS

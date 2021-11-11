@@ -29,8 +29,8 @@ type User struct {
 
 // Credentials is the model representing the user login details
 type Credentials struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email       string `json:"email"`
+	Password    string `json:"password"`
 	OldPassword string `json:"oldPassword"`
 }
 
@@ -111,6 +111,67 @@ type Team struct {
 
 type TeamsList struct {
 	Teams []Team `json:"teams"`
+}
+
+type CollectionDetails struct {
+	collectionBase
+	InProgress            []ContentDetail            `json:"inProgress"`
+	Complete              []ContentDetail            `json:"complete"`
+	Reviewed              []ContentDetail            `json:"reviewed"`
+	TimeSeriesImportFiles []string                   `json:"timeseriesImportFiles"`
+	ApprovalStatus        string                     `json:"approvalStatus"`
+	PendingDeletes        []PendingDelete            `json:"pendingDeletes"`
+	Events                []CollectionEvent          `json:"events"`
+	Datasets              []CollectionDataset        `json:"datasets"`
+	DatasetVersions       []CollectionDatasetVersion `json:"datasetVersions"`
+	TeamDetails           []Team                     `json:"teamsDetails"`
+}
+
+type ContentDetail struct {
+	URI          string                   `json:"uri"`
+	Type         string                   `json:"type"`
+	DeleteMarker bool                     `json:"deleteMarker"`
+	ContentPath  string                   `json:"contentPath"`
+	Description  ContentDetailDescription `json:"description"`
+	Children     []ContentDetail          `json:"children"`
+	Events       []CollectionEvent        `json:"events"`
+}
+
+type ContentDetailDescription struct {
+	Title    string `json:"title"`
+	Edition  string `json:"edition"`
+	Language string `json:"language"`
+}
+
+type CollectionEvent struct {
+	Date      string `json:"date"`
+	EventType string `json:"type"`
+	Email     string `json:"email"`
+	Note      string `json:"note"`
+}
+
+type PendingDelete struct {
+	User         string        `json:"user"`
+	Root         ContentDetail `json:"root"`
+	TotalDeletes int           `json:"totalDeletes"`
+}
+
+type CollectionDataset struct {
+	ID            string `json:"id"`
+	Title         string `json:"title"`
+	ContentStatus string `json:"state"`
+	URI           string `json:"uri"`
+	LastEditedBy  string `json:"lastEditedBy"`
+}
+
+type CollectionDatasetVersion struct {
+	ID            string `json:"id"`
+	Title         string `json:"title"`
+	Edition       string `json:"edition"`
+	Version       string `json:"version"`
+	URI           string `json:"uri"`
+	ContentStatus string `json:"state"`
+	LastEditedBy  string `json:"lastEditedBy"`
 }
 
 func (pt PublishType) Name() string {
