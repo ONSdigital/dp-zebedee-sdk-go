@@ -5,9 +5,9 @@ import (
 	"net/http"
 )
 
-//ListUserKeyring returns a list of collection ID's the keys the user has stored on their keyring
-func (z *zebedeeClient) ListUserKeyring(s Session, email, src string) ([]string, error) {
-	uri := fmt.Sprintf("/ListKeyring?email=%s&src=%s", email, src)
+//ListUserKeyring returns a list of collection ID's for the keys the user has access to.
+func (z *zebedeeClient) ListUserKeyring(s Session) ([]string, error) {
+	uri := fmt.Sprintf("/ListKeyring")
 	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodGet, nil)
 	if err != nil {
 		return nil, err

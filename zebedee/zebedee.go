@@ -60,7 +60,7 @@ type TeamsAPI interface {
 
 //KeyringAPI defines the Keyring endpoints in Zebedee CMS
 type KeyringAPI interface {
-	ListUserKeyring(s Session, email, src string) ([]string, error)
+	ListUserKeyring(s Session) ([]string, error)
 }
 
 //Client defines a client for the Zebedee CMS API
