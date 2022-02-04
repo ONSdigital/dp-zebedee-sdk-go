@@ -3,7 +3,13 @@ package main
 
 import "fmt"
 
-var ThisIsAPublicVarWithoutGodoc string
+var (
+	ThisIsAPublicVarWithoutGodoc string
+
+	errSomeError error
+)
+
+
 
 func main() {
 	var s		string = "Hello world!"
