@@ -11,7 +11,8 @@ build:
 .PHONY: build
 
 lint:
-	./ci/scripts/doGoLint.sh
-	./ci/scripts/doGoFmt.sh
+	#./ci/scripts/doGoLint.sh
+	./ci/scripts/goFmt.sh
+	./ci/scripts/goVet.sh
 	#exit
 .PHONY: lint
