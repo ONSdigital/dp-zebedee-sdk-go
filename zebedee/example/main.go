@@ -6,11 +6,17 @@ import "fmt"
 var (
 	ThisIsAPublicVarWithoutGodoc string
 
-	errSomeError error
+	errSomeError 				error
 )
 
+
+
 func main() {
-	var s string = "Hello world!"
+	var s		string = "Hello world!"
 
 	fmt.Println(s)
+}
+
+func DoSomething() {
+
 }
