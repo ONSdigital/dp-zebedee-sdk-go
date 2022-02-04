@@ -1,5 +1,7 @@
 #!/bin/bash -eux
 
+go get golang.org/x/lint
+
 if [ "$(golint ./... | wc -l)" -gt 0 ]
   then
     golint ./...
