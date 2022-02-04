@@ -9,10 +9,8 @@ var (
 	errSomeError error
 )
 
-
-
 func main() {
-	var s		string = "Hello world!"
+	var s string = "Hello world!"
 
 	fmt.Println(s)
 }
