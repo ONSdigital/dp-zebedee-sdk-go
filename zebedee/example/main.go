@@ -18,7 +18,7 @@ func main() {
 func DoSomething() int {
 	if true {
 		return 0
-		return 0
+		return 0  // intentionally adding this to trigger vet failure.
 	}
 
 	return 1
