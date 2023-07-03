@@ -1,17 +1,15 @@
+.PHONY: test
 test:
 	go test -count=1 -race -cover ./...
-.PHONY: test
 
+.PHONY: audit
 audit:
 	go list -json -m all | nancy sleuth
-.PHONY: audit
 
+.PHONY: build
 build:
 	go build ./...
-.PHONY: build
 
-lint:
-	#./ci/scripts/doGoLint.sh
-	#./ci/scripts/doGoFmt.sh
-	exit
 .PHONY: lint
+lint: ## Used in ci to run linters against Go code
+	golangci-lint run ./...
