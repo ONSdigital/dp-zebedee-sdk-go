@@ -10,7 +10,7 @@ import (
 	"github.com/ONSdigital/dp-net/request"
 )
 
-//CollectionsAPI defines the collections endpoints in Zebedee CMS
+// CollectionsAPI defines the collections endpoints in Zebedee CMS
 type CollectionsAPI interface {
 	GetCollectionByID(s Session, id string) (CollectionDescription, error)
 	CreateCollection(s Session, desc CollectionDescription) (CollectionDescription, error)
@@ -27,13 +27,13 @@ type CollectionsAPI interface {
 	GetCollectionDetails(s Session, id string) (CollectionDetails, error)
 }
 
-//PermissionsAPI defines the user permissions endpoints in Zebedee CMS
+// PermissionsAPI defines the user permissions endpoints in Zebedee CMS
 type PermissionsAPI interface {
 	SetPermissions(s Session, p Permissions) error
 	GetPermissions(s Session, email string) (Permissions, error)
 }
 
-//UsersAPI defines the user endpoints in Zebedee CMS
+// UsersAPI defines the user endpoints in Zebedee CMS
 type UsersAPI interface {
 	CreateUser(s Session, u User) (User, error)
 	GetUser(s Session, email string) (User, error)
@@ -42,12 +42,12 @@ type UsersAPI interface {
 	SetPassword(s Session, c Credentials) error
 }
 
-//AuthAPI defines the authentication endpoints in Zebedee CMS
+// AuthAPI defines the authentication endpoints in Zebedee CMS
 type AuthAPI interface {
 	OpenSession(c Credentials) (Session, error)
 }
 
-//TeamsAPI defines the teams endpoints in Zebedee CMS
+// TeamsAPI defines the teams endpoints in Zebedee CMS
 type TeamsAPI interface {
 	AddTeamMember(s Session, teamName, email string) error
 	RemoveTeamMember(s Session, teamName, email string) error
@@ -57,12 +57,12 @@ type TeamsAPI interface {
 	GetTeam(s Session, teamName string) (Team, error)
 }
 
-//KeyringAPI defines the Keyring endpoints in Zebedee CMS
+// KeyringAPI defines the Keyring endpoints in Zebedee CMS
 type KeyringAPI interface {
 	ListUserKeyring(s Session) ([]string, error)
 }
 
-//Client defines a client for the Zebedee CMS API
+// Client defines a client for the Zebedee CMS API
 type Client interface {
 	AuthAPI
 	UsersAPI
@@ -77,7 +77,7 @@ type zebedeeClient struct {
 	HttpClient HttpClient
 }
 
-//NewClient create a new Client
+// NewClient create a new Client
 func NewClient(host string, httpCli HttpClient) Client {
 	return &zebedeeClient{
 		Host:       host,
@@ -107,7 +107,7 @@ func (z *zebedeeClient) newAuthenticatedRequest(uri, authToken, method string, e
 	return req, nil
 }
 
-//requestObject execute a JSON http request and unmarshal the response into the provided entity
+// requestObject execute a JSON http request and unmarshal the response into the provided entity
 func (z *zebedeeClient) requestObject(r *http.Request, expectedStatus int, entity interface{}) error {
 	resp, err := z.do(r)
 	if err != nil {
@@ -135,13 +135,13 @@ func (z *zebedeeClient) do(req *http.Request) (*http.Response, error) {
 	return z.HttpClient.Do(req.Context(), req)
 }
 
-//discardResponse consume the response body and send it to dev/null
+// discardResponse consume the response body and send it to dev/null
 func discardResponse(resp *http.Response) error {
 	_, err := io.Copy(io.Discard, resp.Body)
 	return err
 }
 
-//executeRequestNoResponse execute the HTTP request, check for the expected status but discard the response body
+// executeRequestNoResponse execute the HTTP request, check for the expected status but discard the response body
 func (z *zebedeeClient) executeRequestNoResponse(r *http.Request, expectedStatus int) error {
 	resp, err := z.do(r)
 	if err != nil {

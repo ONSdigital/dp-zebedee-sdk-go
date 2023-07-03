@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-//NewCollection create a new collection description using the default values.
+// NewCollection create a new collection description using the default values.
 func NewCollection(name string) CollectionDescription {
 	return CollectionDescription{
 		collectionBase: collectionBase{
@@ -30,11 +30,11 @@ func NewCollection(name string) CollectionDescription {
 	}
 }
 
-//CreateCollection create a new collection. Returns an updated collection description containing the generated collection ID or an error.
+// CreateCollection create a new collection. Returns an updated collection description containing the generated collection ID or an error.
 func (z *zebedeeClient) CreateCollection(s Session, desc CollectionDescription) (CollectionDescription, error) {
 	var updated CollectionDescription
 
-	uri := fmt.Sprintf("/collection")
+	uri := "/collection"
 	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, desc)
 	if err != nil {
 		return updated, err
@@ -48,7 +48,7 @@ func (z *zebedeeClient) CreateCollection(s Session, desc CollectionDescription) 
 	return updated, nil
 }
 
-//GetCollectionByID get a collection by ID. Returns the collection description or an error.
+// GetCollectionByID get a collection by ID. Returns the collection description or an error.
 func (z *zebedeeClient) GetCollectionByID(s Session, id string) (CollectionDescription, error) {
 	var desc CollectionDescription
 
@@ -66,7 +66,7 @@ func (z *zebedeeClient) GetCollectionByID(s Session, id string) (CollectionDescr
 	return desc, nil
 }
 
-//DeleteCollection deletes a collection with the provided ID. Returns error if unsuccessful
+// DeleteCollection deletes a collection with the provided ID. Returns error if unsuccessful
 func (z *zebedeeClient) DeleteCollection(s Session, id string) error {
 	uri := fmt.Sprintf("/collection/%s", id)
 	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodDelete, nil)
@@ -87,7 +87,7 @@ func (z *zebedeeClient) DeleteCollection(s Session, id string) error {
 	return nil
 }
 
-//GetCollections returns a list of collection descriptions for each current collection
+// GetCollections returns a list of collection descriptions for each current collection
 func (z *zebedeeClient) GetCollections(s Session) ([]CollectionDescription, error) {
 	req, err := z.newAuthenticatedRequest("/collections", s.ID, http.MethodGet, nil)
 	if err != nil {
@@ -103,7 +103,7 @@ func (z *zebedeeClient) GetCollections(s Session) ([]CollectionDescription, erro
 	return collectionList, nil
 }
 
-//UpdateCollection updates the collection description
+// UpdateCollection updates the collection description
 func (z *zebedeeClient) UpdateCollection(s Session, desc CollectionDescription) error {
 	uri := fmt.Sprintf("/collection/%s", desc.ID)
 	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPut, desc)
@@ -114,7 +114,7 @@ func (z *zebedeeClient) UpdateCollection(s Session, desc CollectionDescription) 
 	return z.executeRequestNoResponse(req, http.StatusOK)
 }
 
-//UpdateCollectionContent updates content within a collection
+// UpdateCollectionContent updates content within a collection
 func (z *zebedeeClient) UpdateCollectionContent(s Session, id, contentUri string, content interface{}) error {
 
 	// using defaults for these flags until it's understood where the alternatives are needed.
@@ -146,7 +146,7 @@ func (z *zebedeeClient) UpdateCollectionContent(s Session, id, contentUri string
 	return nil
 }
 
-//DeleteCollectionContent deletes content from a collection
+// DeleteCollectionContent deletes content from a collection
 func (z *zebedeeClient) DeleteCollectionContent(s Session, id, contentUri string) error {
 	uri := fmt.Sprintf("/content/%s?uri=%s", id, contentUri)
 
@@ -168,7 +168,7 @@ func (z *zebedeeClient) DeleteCollectionContent(s Session, id, contentUri string
 	return nil
 }
 
-//CompleteCollectionContent sets content in a collection to the complete state.
+// CompleteCollectionContent sets content in a collection to the complete state.
 // This is done once the content has been updated and the user is satisfied that the changes are complete
 func (z *zebedeeClient) CompleteCollectionContent(s Session, id, contentUri string) error {
 
@@ -192,7 +192,7 @@ func (z *zebedeeClient) CompleteCollectionContent(s Session, id, contentUri stri
 	return nil
 }
 
-//ReviewCollectionContent sets content in a collection to the reviewed state.
+// ReviewCollectionContent sets content in a collection to the reviewed state.
 // This is done once the content has been reviewed by a user who is not the original editor.
 func (z *zebedeeClient) ReviewCollectionContent(s Session, id, contentUri string) error {
 

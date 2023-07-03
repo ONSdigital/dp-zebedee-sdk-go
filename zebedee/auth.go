@@ -73,7 +73,7 @@ func (z *zebedeeClient) GetPermissions(s Session, email string) (Permissions, er
 	return p, nil
 }
 
-//SetPassword set the user password
+// SetPassword set the user password
 func (z *zebedeeClient) SetPassword(s Session, c Credentials) error {
 	r, err := z.newAuthenticatedRequest("/password", s.ID, http.MethodPost, c)
 	if err != nil {
@@ -81,6 +81,4 @@ func (z *zebedeeClient) SetPassword(s Session, c Credentials) error {
 	}
 
 	return z.executeRequestNoResponse(r, http.StatusOK)
-
-	return nil
 }
