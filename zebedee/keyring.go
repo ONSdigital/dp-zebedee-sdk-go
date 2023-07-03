@@ -1,13 +1,12 @@
 package zebedee
 
 import (
-	"fmt"
 	"net/http"
 )
 
-//ListUserKeyring returns a list of collection ID's for the keys the user has access to.
+// ListUserKeyring returns a list of collection ID's for the keys the user has access to.
 func (z *zebedeeClient) ListUserKeyring(s Session) ([]string, error) {
-	uri := fmt.Sprintf("/ListKeyring")
+	uri := "/ListKeyring"
 	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodGet, nil)
 	if err != nil {
 		return nil, err
