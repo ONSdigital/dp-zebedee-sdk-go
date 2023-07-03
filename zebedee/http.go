@@ -3,7 +3,7 @@ package zebedee
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"time"
 
@@ -16,8 +16,9 @@ const (
 	incorrectStatusWithBodyErrFmt = "request %s %s expected status %d but received %d"
 )
 
-//go:generate moq -out mock/httpclient.go -pkg mock . HttpClient
 // HttpClient defines a Zebedee HTTP client
+//
+//go:generate moq -out mock/httpclient.go -pkg mock . HttpClient
 type HttpClient interface {
 	Do(ctx context.Context, req *http.Request) (*http.Response, error)
 }
@@ -34,16 +35,16 @@ func (err *APIError) Error() string {
 	return err.Message
 }
 
-//NewHttpClient Construct a new HttpClient
+// NewHttpClient Construct a new HttpClient
 func NewHttpClient(timeout time.Duration) HttpClient {
 	return dphttp.ClientWithTimeout(nil, timeout)
 }
 
-//checkResponseStatus return an error if the actual response status did not match the expected.
+// checkResponseStatus return an error if the actual response status did not match the expected.
 func checkResponseStatus(resp *http.Response, expected int) error {
 	req := resp.Request
 	if resp.StatusCode != expected {
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return &APIError{
 				ActualStatus:   resp.StatusCode,

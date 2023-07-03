@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/ONSdigital/dp-net/request"
@@ -120,7 +119,7 @@ func (z *zebedeeClient) requestObject(r *http.Request, expectedStatus int, entit
 		return err
 	}
 
-	b, err := ioutil.ReadAll(resp.Body)
+	b, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
@@ -138,7 +137,7 @@ func (z *zebedeeClient) do(req *http.Request) (*http.Response, error) {
 
 //discardResponse consume the response body and send it to dev/null
 func discardResponse(resp *http.Response) error {
-	_, err := io.Copy(ioutil.Discard, resp.Body)
+	_, err := io.Copy(io.Discard, resp.Body)
 	return err
 }
 

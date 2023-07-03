@@ -6,12 +6,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/ONSdigital/dp-net/request"
-	"github.com/ONSdigital/dp-zebedee-sdk-go/zebedee/mock"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/ONSdigital/dp-net/request"
+	"github.com/ONSdigital/dp-zebedee-sdk-go/zebedee/mock"
 
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -175,7 +176,7 @@ func Test_UpdateCollectionContent(t *testing.T) {
 				So(req.Header.Get(request.FlorenceHeaderKey), ShouldEqual, session.ID)
 				So(req.Header.Get("content-type"), ShouldEqual, "application/json")
 
-				bodyBytes, _ := ioutil.ReadAll(req.Body)
+				bodyBytes, _ := io.ReadAll(req.Body)
 				bodyContent := string(bodyBytes)
 				So(bodyContent, ShouldEqual, pageContent)
 			})
