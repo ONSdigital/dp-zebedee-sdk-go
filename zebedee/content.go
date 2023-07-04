@@ -7,7 +7,7 @@ import (
 )
 
 func (z *zebedeeClient) GetContent(s Session, collectionName string, path string) ([]byte, error) {
-	uri := fmt.Sprintf("/Content/%s?uri=%s", collectionName, path)
+	uri := fmt.Sprintf("/content/%s?uri=%s", collectionName, path)
 	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodGet, nil)
 	if err != nil {
 		return nil, err
@@ -19,7 +19,7 @@ func (z *zebedeeClient) GetContent(s Session, collectionName string, path string
 	}
 	defer resp.Body.Close()
 
-	if err = checkResponseStatus(resp, 200); err != nil {
+	if err = checkResponseStatus(resp, http.StatusOK); err != nil {
 		return nil, err
 	}
 

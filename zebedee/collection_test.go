@@ -615,7 +615,9 @@ func mockHttpResponse(responseCode int, responseBody string) *mock.HttpClientMoc
 			recorder := httptest.NewRecorder()
 			recorder.Code = responseCode
 			recorder.Body = bytes.NewBufferString(responseBody)
-			return recorder.Result(), nil
+			res := recorder.Result()
+			res.Request = req
+			return res, nil
 		},
 	}
 }
