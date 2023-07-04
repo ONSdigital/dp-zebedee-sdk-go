@@ -42,7 +42,7 @@ func Test_GetContent(t *testing.T) {
 func Test_GetContentError(t *testing.T) {
 	session := newSession()
 
-	Convey("Given a mock HTTP client that returns an error response", t, func() {
+	Convey("Given a mock  HTTP client that returns an error response", t, func() {
 		httpClient := mockHttpResponse(http.StatusBadGateway, "")
 		zebedeeClient := NewClient(host, httpClient)
 		expectedUrl := fmt.Sprintf("%s/content/%s?uri=%s", host, collectionId, uri)
