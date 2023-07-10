@@ -7,7 +7,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/ONSdigital/dp-net/request"
+	"github.com/ONSdigital/dp-net/v2/request"
 )
 
 // CollectionsAPI defines the collections endpoints in Zebedee CMS

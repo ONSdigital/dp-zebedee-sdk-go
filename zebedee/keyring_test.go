@@ -12,7 +12,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ONSdigital/dp-net/request"
+	"github.com/ONSdigital/dp-net/v2/request"
 	"github.com/ONSdigital/dp-zebedee-sdk-go/zebedee/mock"
 	. "github.com/smartystreets/goconvey/convey"
 )
