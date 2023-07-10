@@ -62,6 +62,10 @@ type KeyringAPI interface {
 	ListUserKeyring(s Session) ([]string, error)
 }
 
+type ContentAPI interface {
+	GetContent(s Session, collectionName string, uri string) ([]byte, error)
+}
+
 // Client defines a client for the Zebedee CMS API
 type Client interface {
 	AuthAPI
@@ -70,6 +74,7 @@ type Client interface {
 	CollectionsAPI
 	TeamsAPI
 	KeyringAPI
+	ContentAPI
 }
 
 type zebedeeClient struct {
