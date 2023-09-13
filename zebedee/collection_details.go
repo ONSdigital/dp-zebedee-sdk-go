@@ -5,12 +5,12 @@ import (
 	"net/http"
 )
 
-//GetCollectionDetails return the requested collection details from the CMS.
+// GetCollectionDetails return the requested collection details from the CMS.
 func (z *zebedeeClient) GetCollectionDetails(s Session, id string) (CollectionDetails, error) {
 	var details CollectionDetails
 
 	uri := fmt.Sprintf("/collectionDetails/%s", id)
-	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodGet, nil)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodGet, s.IsServiceToken, nil)
 	if err != nil {
 		return details, err
 	}

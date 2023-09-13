@@ -5,10 +5,10 @@ import (
 	"net/http"
 )
 
-//CreateUser a new CMS user
+// CreateUser a new CMS user
 func (z *zebedeeClient) CreateUser(s Session, u User) (User, error) {
 	var user User
-	req, err := z.newAuthenticatedRequest("/users", s.ID, http.MethodPost, u)
+	req, err := z.newAuthenticatedRequest("/users", s.ID, http.MethodPost, s.IsServiceToken, u)
 	if err != nil {
 		return user, err
 	}
@@ -20,12 +20,12 @@ func (z *zebedeeClient) CreateUser(s Session, u User) (User, error) {
 	return user, nil
 }
 
-//GetUser a CMS user by email
+// GetUser a CMS user by email
 func (z *zebedeeClient) GetUser(s Session, email string) (User, error) {
 	var user User
 
 	uri := fmt.Sprintf("/users?email=%s", email)
-	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodGet, nil)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodGet, s.IsServiceToken, nil)
 	if err != nil {
 		return user, err
 	}
@@ -38,9 +38,9 @@ func (z *zebedeeClient) GetUser(s Session, email string) (User, error) {
 	return user, nil
 }
 
-//GetUsers a list of the CMS users
+// GetUsers a list of the CMS users
 func (z *zebedeeClient) GetUsers(s Session) ([]User, error) {
-	req, err := z.newAuthenticatedRequest("/users", s.ID, http.MethodGet, nil)
+	req, err := z.newAuthenticatedRequest("/users", s.ID, http.MethodGet, s.IsServiceToken, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -54,9 +54,9 @@ func (z *zebedeeClient) GetUsers(s Session) ([]User, error) {
 	return users, nil
 }
 
-//DeleteUser delete a CMS user.
+// DeleteUser delete a CMS user.
 func (z *zebedeeClient) DeleteUser(s Session, email string) error {
-	req, err := z.newAuthenticatedRequest("/users?email="+email, s.ID, http.MethodDelete, nil)
+	req, err := z.newAuthenticatedRequest("/users?email="+email, s.ID, http.MethodDelete, s.IsServiceToken, nil)
 	if err != nil {
 		return err
 	}

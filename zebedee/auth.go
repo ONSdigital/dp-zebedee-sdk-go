@@ -45,9 +45,44 @@ func (z *zebedeeClient) OpenSession(c Credentials) (Session, error) {
 	return s, nil
 }
 
+// OpenServiceSession opens a new session using the service auth token provided
+func (z *zebedeeClient) OpenServiceSession(serviceAuthToken string) (Session, error) {
+	var s Session
+
+	url := fmt.Sprintf("%s/identity", z.Host)
+	r, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return s, err
+	}
+
+	r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", serviceAuthToken))
+
+	resp, err := z.do(r)
+	if err != nil {
+		return s, err
+	}
+	defer resp.Body.Close()
+
+	if err = checkResponseStatus(resp, http.StatusOK); err != nil {
+		return s, err
+	}
+
+	b, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return s, err
+	}
+
+	s = Session{
+		ID:             string(b),
+		IsServiceToken: true,
+	}
+
+	return s, nil
+}
+
 // SetPermissions  set the user's CMS permissions
 func (z *zebedeeClient) SetPermissions(s Session, p Permissions) error {
-	r, err := z.newAuthenticatedRequest("/permission", s.ID, http.MethodPost, p)
+	r, err := z.newAuthenticatedRequest("/permission", s.ID, http.MethodPost, s.IsServiceToken, p)
 	if err != nil {
 		return err
 	}
@@ -60,7 +95,7 @@ func (z *zebedeeClient) GetPermissions(s Session, email string) (Permissions, er
 	var p Permissions
 	uri := fmt.Sprintf("/permission?email=%s", email)
 
-	r, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodGet, nil)
+	r, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodGet, s.IsServiceToken, nil)
 	if err != nil {
 		return p, err
 	}
@@ -75,7 +110,7 @@ func (z *zebedeeClient) GetPermissions(s Session, email string) (Permissions, er
 
 // SetPassword set the user password
 func (z *zebedeeClient) SetPassword(s Session, c Credentials) error {
-	r, err := z.newAuthenticatedRequest("/password", s.ID, http.MethodPost, c)
+	r, err := z.newAuthenticatedRequest("/password", s.ID, http.MethodPost, s.IsServiceToken, c)
 	if err != nil {
 		return err
 	}

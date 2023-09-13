@@ -15,10 +15,10 @@ const (
 	CollectionDateFMT = "2006-01-02T15:04:05.000Z"
 )
 
-//PublishType enum defining the different types of collection publishes
+// PublishType enum defining the different types of collection publishes
 type PublishType int
 
-//User defines the CMS user structure
+// User defines the CMS user structure
 type User struct {
 	Name              string `json:"name"`
 	Email             string `json:"email"`
@@ -36,8 +36,9 @@ type Credentials struct {
 
 // Session is the model of a CMS user session.
 type Session struct {
-	Email string `json:"email"`
-	ID    string `json:"id"`
+	Email          string `json:"email"`
+	ID             string `json:"id"`
+	IsServiceToken bool   `json:"isServiceToken"`
 }
 
 // Permissions is the model representing user's CMS permissions
@@ -57,7 +58,7 @@ type collectionBase struct {
 	Teams       []string    `json:"teams"`
 }
 
-//CollectionDescription object representation of a CMS collection metadata
+// CollectionDescription object representation of a CMS collection metadata
 type CollectionDescription struct {
 	collectionBase
 	Encrypted             bool            `json:"isEncrypted"`
