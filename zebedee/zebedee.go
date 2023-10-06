@@ -45,6 +45,7 @@ type UsersAPI interface {
 // AuthAPI defines the authentication endpoints in Zebedee CMS
 type AuthAPI interface {
 	OpenSession(c Credentials) (Session, error)
+	OpenSessionJWT(authToken string) (Session, error)
 }
 
 // TeamsAPI defines the teams endpoints in Zebedee CMS
@@ -108,11 +109,8 @@ func (z *zebedeeClient) newAuthenticatedRequest(uri, authToken, method string, i
 	}
 
 	req.Header.Set("content-type", "application/json")
-	if isServiceToken {
-		req.Header.Set(request.AuthHeaderKey, authToken)
-	} else {
-		req.Header.Set(request.FlorenceHeaderKey, authToken)
-	}
+	req.Header.Set(request.FlorenceHeaderKey, authToken)
+
 	return req, nil
 }
 

@@ -45,36 +45,10 @@ func (z *zebedeeClient) OpenSession(c Credentials) (Session, error) {
 	return s, nil
 }
 
-// OpenServiceSession opens a new session using the service auth token provided
-func (z *zebedeeClient) OpenServiceSession(serviceAuthToken string) (Session, error) {
-	var s Session
-
-	url := fmt.Sprintf("%s/identity", z.Host)
-	r, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		return s, err
-	}
-
-	r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", serviceAuthToken))
-
-	resp, err := z.do(r)
-	if err != nil {
-		return s, err
-	}
-	defer resp.Body.Close()
-
-	if err = checkResponseStatus(resp, http.StatusOK); err != nil {
-		return s, err
-	}
-
-	b, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return s, err
-	}
-
-	s = Session{
-		ID:             string(b),
-		IsServiceToken: true,
+// OpenSessionJWT opens a new session using the auth token provided
+func (z *zebedeeClient) OpenSessionJWT(authToken string) (Session, error) {
+	s := Session{
+		ID: authToken,
 	}
 
 	return s, nil
