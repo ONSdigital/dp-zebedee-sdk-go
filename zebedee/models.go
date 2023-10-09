@@ -36,9 +36,8 @@ type Credentials struct {
 
 // Session is the model of a CMS user session.
 type Session struct {
-	Email          string `json:"email"`
-	ID             string `json:"id"`
-	IsServiceToken bool   `json:"isServiceToken"`
+	Email string `json:"email"`
+	ID    string `json:"id"`
 }
 
 // Permissions is the model representing user's CMS permissions

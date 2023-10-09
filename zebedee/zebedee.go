@@ -110,7 +110,6 @@ func (z *zebedeeClient) newAuthenticatedRequest(uri, authToken, method string, e
 
 	req.Header.Set("content-type", "application/json")
 	req.Header.Set(request.FlorenceHeaderKey, authToken)
-
 	return req, nil
 }
 
