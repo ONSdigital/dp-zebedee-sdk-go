@@ -91,7 +91,7 @@ func NewClient(host string, httpCli HttpClient) Client {
 	}
 }
 
-func (z *zebedeeClient) newAuthenticatedRequest(uri, authToken, method string, isServiceToken bool, entity interface{}) (*http.Request, error) {
+func (z *zebedeeClient) newAuthenticatedRequest(uri, authToken, method string, entity interface{}) (*http.Request, error) {
 	var body io.Reader
 	if entity != nil {
 		b, err := json.Marshal(entity)

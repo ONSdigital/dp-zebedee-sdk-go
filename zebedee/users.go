@@ -8,7 +8,7 @@ import (
 // CreateUser a new CMS user
 func (z *zebedeeClient) CreateUser(s Session, u User) (User, error) {
 	var user User
-	req, err := z.newAuthenticatedRequest("/users", s.ID, http.MethodPost, s.IsServiceToken, u)
+	req, err := z.newAuthenticatedRequest("/users", s.ID, http.MethodPost, u)
 	if err != nil {
 		return user, err
 	}
@@ -25,7 +25,7 @@ func (z *zebedeeClient) GetUser(s Session, email string) (User, error) {
 	var user User
 
 	uri := fmt.Sprintf("/users?email=%s", email)
-	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodGet, s.IsServiceToken, nil)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodGet, nil)
 	if err != nil {
 		return user, err
 	}
@@ -40,7 +40,7 @@ func (z *zebedeeClient) GetUser(s Session, email string) (User, error) {
 
 // GetUsers a list of the CMS users
 func (z *zebedeeClient) GetUsers(s Session) ([]User, error) {
-	req, err := z.newAuthenticatedRequest("/users", s.ID, http.MethodGet, s.IsServiceToken, nil)
+	req, err := z.newAuthenticatedRequest("/users", s.ID, http.MethodGet, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func (z *zebedeeClient) GetUsers(s Session) ([]User, error) {
 
 // DeleteUser delete a CMS user.
 func (z *zebedeeClient) DeleteUser(s Session, email string) error {
-	req, err := z.newAuthenticatedRequest("/users?email="+email, s.ID, http.MethodDelete, s.IsServiceToken, nil)
+	req, err := z.newAuthenticatedRequest("/users?email="+email, s.ID, http.MethodDelete, nil)
 	if err != nil {
 		return err
 	}

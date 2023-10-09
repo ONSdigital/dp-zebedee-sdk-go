@@ -10,7 +10,7 @@ func (z *zebedeeClient) GetCollectionDetails(s Session, id string) (CollectionDe
 	var details CollectionDetails
 
 	uri := fmt.Sprintf("/collectionDetails/%s", id)
-	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodGet, s.IsServiceToken, nil)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodGet, nil)
 	if err != nil {
 		return details, err
 	}

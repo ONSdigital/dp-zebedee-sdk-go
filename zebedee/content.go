@@ -8,7 +8,7 @@ import (
 
 func (z *zebedeeClient) GetContent(s Session, collectionName string, path string) ([]byte, error) {
 	uri := fmt.Sprintf("/content/%s?uri=%s", collectionName, path)
-	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodGet, s.IsServiceToken, nil)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodGet, nil)
 	if err != nil {
 		return nil, err
 	}

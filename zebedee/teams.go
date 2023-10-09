@@ -8,7 +8,7 @@ import (
 // AddTeamMember add a CMS user to the specified team
 func (z *zebedeeClient) AddTeamMember(s Session, teamName, email string) error {
 	uri := fmt.Sprintf("/teams/%s?email=%s", teamName, email)
-	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, s.IsServiceToken, nil)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, nil)
 	if err != nil {
 		return err
 	}
@@ -19,7 +19,7 @@ func (z *zebedeeClient) AddTeamMember(s Session, teamName, email string) error {
 // RemoveTeamMember remove a user from the specific team
 func (z *zebedeeClient) RemoveTeamMember(s Session, teamName, email string) error {
 	uri := fmt.Sprintf("/teams/%s?email=%s", teamName, email)
-	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodDelete, s.IsServiceToken, nil)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodDelete, nil)
 	if err != nil {
 		return err
 	}
@@ -30,7 +30,7 @@ func (z *zebedeeClient) RemoveTeamMember(s Session, teamName, email string) erro
 // CreateTeam create a new team
 func (z *zebedeeClient) CreateTeam(s Session, teamName string) (bool, error) {
 	uri := fmt.Sprintf("/teams/%s", teamName)
-	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, s.IsServiceToken, nil)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, nil)
 	if err != nil {
 		return false, err
 	}
@@ -46,7 +46,7 @@ func (z *zebedeeClient) CreateTeam(s Session, teamName string) (bool, error) {
 // DeleteTeam delete a team
 func (z *zebedeeClient) DeleteTeam(s Session, teamName string) error {
 	uri := fmt.Sprintf("/teams/%s", teamName)
-	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodDelete, s.IsServiceToken, nil)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodDelete, nil)
 	if err != nil {
 		return err
 	}
@@ -57,7 +57,7 @@ func (z *zebedeeClient) DeleteTeam(s Session, teamName string) error {
 // ListTeams return a list of the current teams in the CMS
 func (z *zebedeeClient) ListTeams(s Session) (TeamsList, error) {
 	var teams TeamsList
-	req, err := z.newAuthenticatedRequest("/teams", s.ID, http.MethodGet, s.IsServiceToken, nil)
+	req, err := z.newAuthenticatedRequest("/teams", s.ID, http.MethodGet, nil)
 	if err != nil {
 		return teams, err
 	}
@@ -73,7 +73,7 @@ func (z *zebedeeClient) ListTeams(s Session) (TeamsList, error) {
 func (z *zebedeeClient) GetTeam(s Session, teamName string) (Team, error) {
 	var team Team
 	uri := fmt.Sprintf("/teams/%s", teamName)
-	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodGet, s.IsServiceToken, nil)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodGet, nil)
 	if err != nil {
 		return team, err
 	}

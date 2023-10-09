@@ -35,7 +35,7 @@ func (z *zebedeeClient) CreateCollection(s Session, desc CollectionDescription) 
 	var updated CollectionDescription
 
 	uri := "/collection"
-	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, s.IsServiceToken, desc)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, desc)
 	if err != nil {
 		return updated, err
 	}
@@ -53,7 +53,7 @@ func (z *zebedeeClient) GetCollectionByID(s Session, id string) (CollectionDescr
 	var desc CollectionDescription
 
 	uri := fmt.Sprintf("/collection/%s", id)
-	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodGet, s.IsServiceToken, nil)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodGet, nil)
 	if err != nil {
 		return desc, err
 	}
@@ -69,7 +69,7 @@ func (z *zebedeeClient) GetCollectionByID(s Session, id string) (CollectionDescr
 // DeleteCollection deletes a collection with the provided ID. Returns error if unsuccessful
 func (z *zebedeeClient) DeleteCollection(s Session, id string) error {
 	uri := fmt.Sprintf("/collection/%s", id)
-	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodDelete, s.IsServiceToken, nil)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodDelete, nil)
 	if err != nil {
 		return err
 	}
@@ -89,7 +89,7 @@ func (z *zebedeeClient) DeleteCollection(s Session, id string) error {
 
 // GetCollections returns a list of collection descriptions for each current collection
 func (z *zebedeeClient) GetCollections(s Session) ([]CollectionDescription, error) {
-	req, err := z.newAuthenticatedRequest("/collections", s.ID, http.MethodGet, s.IsServiceToken, nil)
+	req, err := z.newAuthenticatedRequest("/collections", s.ID, http.MethodGet, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +106,7 @@ func (z *zebedeeClient) GetCollections(s Session) ([]CollectionDescription, erro
 // UpdateCollection updates the collection description
 func (z *zebedeeClient) UpdateCollection(s Session, desc CollectionDescription) error {
 	uri := fmt.Sprintf("/collection/%s", desc.ID)
-	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPut, s.IsServiceToken, desc)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPut, desc)
 	if err != nil {
 		return err
 	}
@@ -128,7 +128,7 @@ func (z *zebedeeClient) UpdateCollectionContent(s Session, id, contentUri string
 	uri := fmt.Sprintf("/content/%s?uri=%s&overwriteExisting=%t&recursive=%t&validateJson=%t",
 		id, contentUri, overwriteExisting, recursive, validateJson)
 
-	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, s.IsServiceToken, content)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, content)
 	if err != nil {
 		return err
 	}
@@ -150,7 +150,7 @@ func (z *zebedeeClient) UpdateCollectionContent(s Session, id, contentUri string
 func (z *zebedeeClient) DeleteCollectionContent(s Session, id, contentUri string) error {
 	uri := fmt.Sprintf("/content/%s?uri=%s", id, contentUri)
 
-	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodDelete, s.IsServiceToken, nil)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodDelete, nil)
 	if err != nil {
 		return err
 	}
@@ -179,7 +179,7 @@ func (z *zebedeeClient) CompleteCollectionContent(s Session, id, contentUri stri
 
 	uri := fmt.Sprintf("/complete/%s?uri=%s&recursive=%t", id, contentUri, recursive)
 
-	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, s.IsServiceToken, nil)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, nil)
 	if err != nil {
 		return err
 	}
@@ -203,7 +203,7 @@ func (z *zebedeeClient) ReviewCollectionContent(s Session, id, contentUri string
 
 	uri := fmt.Sprintf("/review/%s?uri=%s&recursive=%t", id, contentUri, recursive)
 
-	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, s.IsServiceToken, nil)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, nil)
 	if err != nil {
 		return err
 	}
@@ -221,7 +221,7 @@ func (z *zebedeeClient) ReviewCollectionContent(s Session, id, contentUri string
 // A scheduled collection will only be published if the collection is approved
 func (z *zebedeeClient) ApproveCollection(s Session, id string) error {
 	uri := fmt.Sprintf("/approve/%s", id)
-	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, s.IsServiceToken, nil)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, nil)
 	if err != nil {
 		return err
 	}
@@ -242,7 +242,7 @@ func (z *zebedeeClient) ApproveCollection(s Session, id string) error {
 // UnlockCollection reverses the approval state, allowing collection content to be edited
 func (z *zebedeeClient) UnlockCollection(s Session, id string) error {
 	uri := fmt.Sprintf("/unlock/%s", id)
-	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, s.IsServiceToken, nil)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, nil)
 	if err != nil {
 		return err
 	}
@@ -263,7 +263,7 @@ func (z *zebedeeClient) UnlockCollection(s Session, id string) error {
 // PublishCollection publishes the updated collection content to the public website
 func (z *zebedeeClient) PublishCollection(s Session, id string) error {
 	uri := fmt.Sprintf("/publish/%s", id)
-	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, s.IsServiceToken, nil)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodPost, nil)
 	if err != nil {
 		return err
 	}

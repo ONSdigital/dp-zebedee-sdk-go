@@ -7,7 +7,7 @@ import (
 // ListUserKeyring returns a list of collection ID's for the keys the user has access to.
 func (z *zebedeeClient) ListUserKeyring(s Session) ([]string, error) {
 	uri := "/ListKeyring"
-	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodGet, s.IsServiceToken, nil)
+	req, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodGet, nil)
 	if err != nil {
 		return nil, err
 	}

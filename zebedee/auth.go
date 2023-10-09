@@ -56,7 +56,7 @@ func (z *zebedeeClient) OpenSessionJWT(authToken string) (Session, error) {
 
 // SetPermissions  set the user's CMS permissions
 func (z *zebedeeClient) SetPermissions(s Session, p Permissions) error {
-	r, err := z.newAuthenticatedRequest("/permission", s.ID, http.MethodPost, s.IsServiceToken, p)
+	r, err := z.newAuthenticatedRequest("/permission", s.ID, http.MethodPost, p)
 	if err != nil {
 		return err
 	}
@@ -69,7 +69,7 @@ func (z *zebedeeClient) GetPermissions(s Session, email string) (Permissions, er
 	var p Permissions
 	uri := fmt.Sprintf("/permission?email=%s", email)
 
-	r, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodGet, s.IsServiceToken, nil)
+	r, err := z.newAuthenticatedRequest(uri, s.ID, http.MethodGet, nil)
 	if err != nil {
 		return p, err
 	}
@@ -84,7 +84,7 @@ func (z *zebedeeClient) GetPermissions(s Session, email string) (Permissions, er
 
 // SetPassword set the user password
 func (z *zebedeeClient) SetPassword(s Session, c Credentials) error {
-	r, err := z.newAuthenticatedRequest("/password", s.ID, http.MethodPost, s.IsServiceToken, c)
+	r, err := z.newAuthenticatedRequest("/password", s.ID, http.MethodPost, c)
 	if err != nil {
 		return err
 	}
