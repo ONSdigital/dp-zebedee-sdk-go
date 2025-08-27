@@ -2,14 +2,18 @@ package zebedee
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/ONSdigital/log.go/v2/log"
 )
 
 // OpenSession opens a new user session using the login credentials provided
 func (z *zebedeeClient) OpenSession(c Credentials) (Session, error) {
+	ctx := context.Background()
 	var s Session
 	body, err := json.Marshal(c)
 	if err != nil {
@@ -26,7 +30,12 @@ func (z *zebedeeClient) OpenSession(c Credentials) (Session, error) {
 	if err != nil {
 		return s, err
 	}
-	defer resp.Body.Close()
+
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.Error(ctx, "error closing http response body", err)
+		}
+	}()
 
 	if err = checkResponseStatus(resp, http.StatusOK); err != nil {
 		return s, err

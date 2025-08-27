@@ -24,14 +24,14 @@ var (
 	}
 
 	testHost = "http://localhost:8082"
-	testErr  = errors.New("this is a test error")
+	errTest  = errors.New("this is a test error")
 )
 
 func TestZebedeeClient_ListUserKeyring(t *testing.T) {
 	Convey("Given httpCli.Do returns an error", t, func() {
 		mockHttpCli := &mock.HttpClientMock{
 			DoFunc: func(ctx context.Context, req *http.Request) (*http.Response, error) {
-				return nil, testErr
+				return nil, errTest
 			},
 		}
 
@@ -46,7 +46,7 @@ func TestZebedeeClient_ListUserKeyring(t *testing.T) {
 
 			Convey("And the expected error is returned", func() {
 				So(err, ShouldNotBeNil)
-				So(err, ShouldResemble, testErr)
+				So(err, ShouldResemble, errTest)
 				So(keyring, ShouldBeEmpty)
 			})
 		})

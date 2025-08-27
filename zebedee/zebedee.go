@@ -2,12 +2,14 @@ package zebedee
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 
 	"github.com/ONSdigital/dp-net/v2/request"
+	"github.com/ONSdigital/log.go/v2/log"
 )
 
 // CollectionsAPI defines the collections endpoints in Zebedee CMS
@@ -83,6 +85,8 @@ type zebedeeClient struct {
 	HttpClient HttpClient
 }
 
+var ctx = context.Background()
+
 // NewClient create a new Client
 func NewClient(host string, httpCli HttpClient) Client {
 	return &zebedeeClient{
@@ -119,7 +123,12 @@ func (z *zebedeeClient) requestObject(r *http.Request, expectedStatus int, entit
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.Error(ctx, "error closing http response body", err)
+		}
+	}()
 
 	if err = checkResponseStatus(resp, expectedStatus); err != nil {
 		return err
@@ -153,7 +162,12 @@ func (z *zebedeeClient) executeRequestNoResponse(r *http.Request, expectedStatus
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.Error(ctx, "error closing http response body", err)
+		}
+	}()
 
 	if err = checkResponseStatus(resp, expectedStatus); err != nil {
 		return err
